@@ -39,7 +39,7 @@ curl --header "Content-Type: application/json" --request POST --data @data/worko
 # do a delivery
 curl --header "Content-Type: application/json" --request POST --data @data/component_demands.json http://localhost:9080/manufacturedomain/component/deliver
 
-#set workorder in different states
+#set workorder with id 1 in different states
 #from OPEN to STAGE1
 curl --header "Content-Type: application/json" --request PUT --data @data/workorder.json http://localhost:9080/manufacturedomain/workorder/advance_status/1
 #from STAGE1 to STAGE2
@@ -47,7 +47,7 @@ curl --header "Content-Type: application/json" --request PUT --data @data/workor
 #from STAGE3 to STAGE3
 curl --header "Content-Type: application/json" --request PUT --data @data/workorder.json http://localhost:9080/manufacturedomain/workorder/advance_status/1
 
-#complete workorder
+#complete with id 1 workorder
 curl --header "Content-Type: application/json" --request PUT --data @data/workorder.json http://localhost:9080/manufacturedomain/workorder/1/2
 
 # cancel a workorder

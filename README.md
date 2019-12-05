@@ -2,9 +2,9 @@
 manufacturedomain is a part of a showcase implementation which is running on a open liberty instance. It is structured right now like this
 
 - **manufacturedomainParent** Parent maven module
-  - **manufacturedomainDTO** - contains all classes used in the rest controllers
-  - **manufacturedomainWAR** - contains the rest controllers and all EJB classes and entities
-  - **manufacturedomainEAR** - contains the war module
+    - **manufacturedomainDTO** - contains all classes used in the rest controllers
+    - **manufacturedomainWAR** - contains the rest controllers and all EJB classes and entities
+    - **manufacturedomainEAR** - contains the war module
 
 #### The project consists of the following packages
 
@@ -25,16 +25,24 @@ All commands have to be executed from the manufacturedomainEAR folder. In develo
 #### Smoketest
 There is a little script smoketest.sh in the manufacturedomainParent\resources\smoketest folder which could be used to test if the very basic functionality works after staring the open liberty server with the manufacturedomain as EAR. Be careful this smoketest.sh could be run only once!!!
 
-- create three components
+- create three components (parts)
 - create two assemblies
-- create bill of material (bom) with component(3) and assembly(2) (assembly 1 is build up from part 1,2,3 and assembly 2 is build up only from part 1 and 2)
-- create the inventories for component(3) and assembly(2)
+- create bill of material (bom) 
+    - with three components and two assemblies
+    - assembly 1 is build up from part 1,2,3 and 
+    - assembly 2 is build up only from part 1 and 2
+- create the inventories for 
+    - three components and 
+    - two assemblies
 - create/schedule a workorder
-- deliver parts
+- deliver (ComponentDemand) parts
 - move workorder through the workorder states
-- complete workorder
+    - **STAGE1**
+    - **STAGE2**
+    - **STAGE3**
+- complete workorder/ set workorder in state **COMPLETE**
 - create second workorder
-- cancel the second workorder
+- cancel the second workorder / set workorder in state **CANCELED**
 
 #### TODOs:
 
