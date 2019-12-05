@@ -1,0 +1,204 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.novatec.showcase</groupId>
+		<artifactId>manufacturedomainParent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>manufacturedomainEAR</artifactId>
+	<packaging>ear</packaging>
+
+	<name>manufacturedomainEAR</name>
+
+	<properties>
+		<shared.resource.dir>${project.build.directory}/liberty/wlp/usr/shared/resources</shared.resource.dir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Liberty configuration -->
+		<liberty.var.default.http.port>9080</liberty.var.default.http.port>
+		<liberty.var.default.https.port>9443</liberty.var.default.https.port>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.novatec.showcase</groupId>
+			<artifactId>manufacturedomainWAR</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>war</type>
+		</dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>de.novatec.showcase</groupId>
+			<artifactId>manufacturedomainDTO</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.10.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-client</artifactId>
+			<version>3.2.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-extension-providers</artifactId>
+			<version>3.2.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.0.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.29.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<modules>
+						<webModule>
+							<groupId>de.novatec.showcase</groupId>
+							<artifactId>manufacturedomainWAR</artifactId>
+							<uri>/manufacturedomainWAR.war-1.0-SNAPSHOT.war</uri>
+							<contextRoot>/manufacturedomain</contextRoot>
+						</webModule>
+					</modules>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>io.openliberty.tools</groupId>
+				<artifactId>liberty-maven-plugin</artifactId>
+				<!-- see https://github.com/OpenLiberty/ci.common/issues/110 -->
+<!-- 				<version>3.2-SNAPSHOT</version> -->
+				<configuration>
+					<assemblyArtifact>
+						<groupId>io.openliberty</groupId>
+						<artifactId>openliberty-runtime</artifactId>
+						<version>RELEASE</version>
+						<type>zip</type>
+					</assemblyArtifact>
+					<serverName>${project.artifactId}Server</serverName>
+					<stripVersion>true</stripVersion>
+					<configFile>../resources/liberty/config/server.xml</configFile>
+					<packageFile>${package.file}</packageFile>
+					<include>${packaging.type}</include>
+					<bootstrapProperties>
+						<default.http.port>${liberty.var.default.http.port}</default.http.port>
+						<default.https.port>${liberty.var.default.https.port}</default.https.port>
+						<app.context.root>manufacturedomain</app.context.root>
+					</bootstrapProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<id>package-server</id>
+						<configuration>
+							<outputDirectory>target/wlp-package</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+				<!-- <dependencies> -->
+				<!-- <dependency> -->
+				<!-- <groupId>io.openliberty.tools</groupId> -->
+				<!-- <artifactId>ci.common</artifactId> -->
+				<!-- <version>1.8-SNAPSHOT</version> -->
+				<!-- </dependency> -->
+				<!-- </dependencies> -->
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${shared.resource.dir}/h2</outputDirectory>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.h2database</groupId>
+									<artifactId>h2</artifactId>
+									<version>1.4.200</version>
+									<type>jar</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<executions>
+					<execution>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M4</version>
+				<configuration>
+					<systemPropertyVariables>
+						<https.port>${liberty.var.default.https.port}</https.port>
+						<http.port>${liberty.var.default.http.port}</http.port>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>

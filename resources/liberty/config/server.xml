@@ -1,0 +1,65 @@
+<server description="order domain server">
+	<featureManager>
+		<feature>javaee-8.0</feature>
+	</featureManager>
+
+	<logging
+		traceSpecification="com.ibm.ws.microprofile.health.*=all" />
+
+<!-- 	<httpEndpoint host="localhost" httpPort="-1" -->
+	<httpEndpoint host="localhost" httpPort="${default.http.port}"
+		httpsPort="${default.https.port}" id="defaultHttpEndpoint" />
+
+	<keyStore id="defaultKeyStore"
+		type="PKCS12"
+		password="Liberty" />
+
+	<jdbcDriver id="H2Driver"
+		javax.sql.DataSource="org.h2.jdbcx.JdbcDataSource" libraryRef="h2-lib" />
+	<library id="h2-lib">
+		<fileset dir="${shared.resource.dir}/h2"
+			includes="h2-1.4.200.jar" />
+	</library>
+
+	<dataSource id="h2-db" jndiName="jdbc/manufacture_db"
+		type="javax.sql.DataSource" jdbcDriverRef="H2Driver">
+		<properties	url="jdbc:h2:mem:order_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;TRACE_LEVEL_FILE=4" />
+	</dataSource>
+
+	<basicRegistry id="basic" realm="defaultRealm">
+<!-- 		<user name="admin" password="adminpwd" /> -->
+<!-- 		<user name="testuser" password="pwd" /> -->
+
+<!-- 		<group name="ORDERDOMAIN.ITEM"> -->
+<!-- 			<member name="testuser" /> -->
+<!-- 		</group> -->
+<!-- 		<group name="ORDERDOMAIN.CUSTOMER"> -->
+<!-- 			<member name="testuser" /> -->
+<!-- 		</group> -->
+<!-- 		<group name="ORDERDOMAIN.ORDER"> -->
+<!-- 			<member name="testuser" /> -->
+<!-- 		</group> -->
+<!-- 		<group name="ORDERDOMAIN.ADMIN"> -->
+<!-- 			<member name="admin" /> -->
+<!-- 		</group> -->
+	</basicRegistry>
+
+	<enterpriseApplication id="manufacturedomain"
+		location="manufacturedomainEAR.ear" name="manufacturedomainEAR.ear">
+<!-- 		<application-bnd> -->
+<!-- 			<security-role name="ORDERDOMAIN.ITEM"> -->
+<!-- 				<group name="ORDERDOMAIN.ITEM" /> -->
+<!-- 			</security-role> -->
+<!-- 			<security-role name="ORDERDOMAIN.CUSTOMER"> -->
+<!-- 				<group name="ORDERDOMAIN.CUSTOMER" /> -->
+<!-- 			</security-role> -->
+<!-- 			<security-role name="ORDERDOMAIN.ORDER"> -->
+<!-- 				<group name="ORDERDOMAIN.ORDER" /> -->
+<!-- 			</security-role> -->
+<!-- 			<security-role name="ORDERDOMAIN.ADMIN"> -->
+<!-- 				<group name="ORDERDOMAIN.ADMIN" /> -->
+<!-- 			</security-role> -->
+<!-- 		</application-bnd> -->
+	</enterpriseApplication>
+
+</server>

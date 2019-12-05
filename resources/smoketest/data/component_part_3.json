@@ -1,0 +1,12 @@
+{
+	"name": "Part 3",
+	"description": "The 3rd part...",
+	"revision": "1",
+	"planner": 1,
+	"type": 1,
+	"purchased": 1,
+	"lomark": 1,
+	"himark": 1,
+	"componentBoms": [],
+	"version": 1
+}

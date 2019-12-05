@@ -1,0 +1,11 @@
+{
+	"location": 1,
+	"salesId": 1,
+	"orderLineId": 1,
+	"originalQuantity": 10,
+	"completedQuantity": -1,
+	"status": "OPEN",
+	"dueDate": "2020-12-16",
+	"assemblyId": 4,
+	"version": 0
+}

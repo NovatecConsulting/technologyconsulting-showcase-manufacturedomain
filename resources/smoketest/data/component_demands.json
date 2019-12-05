@@ -1,0 +1,19 @@
+{
+	"componentDemands": [
+		{
+			"componentId": "1",
+			"quantity": 20,
+			"location": 1
+		},
+		{
+			"componentId": "2",
+			"quantity": 10,
+			"location": 1
+		},
+		{
+			"componentId": "3",
+			"quantity": 20,
+			"location": 1
+		}
+	]
+}
