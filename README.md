@@ -14,7 +14,7 @@ manufacturedomain is a part of a showcase implementation which is running on a o
 - **de.novatec.showcase.manufacture.mapper** - with orika mapper fro dto/entity mapping
 
 
-#### build, run and stop orderdomain on an open liberty server
+#### build, run and stop manufacturedomain on an open liberty server
 - **build:** mvn clean install
 - **run:** mvn liberty:run
 - **stop:** mvn liberty:stop
