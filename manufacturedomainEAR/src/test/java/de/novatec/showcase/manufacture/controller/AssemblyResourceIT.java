@@ -26,7 +26,7 @@ import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.dto.InventoryPK;
 
-public class AssemblyResouceIT extends ResourceITBase {
+public class AssemblyResourceIT extends ResourceITBase {
 	
 	protected static final String INVENTORY_URL = ASSEMBLY_URL + "inventory/";
 	protected static final String BOM_URL = ASSEMBLY_URL + "bom/";
@@ -137,7 +137,7 @@ public class AssemblyResouceIT extends ResourceITBase {
 	}
 
 
-@Test
+	@Test
 	public void testGetAllInventories() {
 		WebTarget target = client.target(INVENTORY_URL);
 		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
