@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import de.novatec.showcase.manufacture.GlobalConstants;
+
 public class WorkOrder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -15,6 +19,8 @@ public class WorkOrder implements Serializable {
 	private WorkOrderStatus status;
 	private int originalQuantity;
 	private int completedQuantity;
+
+	@JsonFormat(pattern = GlobalConstants.DATE_FORMAT, locale = "de_DE")
 	private Calendar dueDate;
 	private Calendar startDate;
 	private String assemblyId;
@@ -23,6 +29,21 @@ public class WorkOrder implements Serializable {
 	public WorkOrder() {
 		super();
 	}
+	
+	public WorkOrder(int location, int salesId, int orderLineId, int originalQuantity, Calendar dueDate,
+			String assemblyId) {
+		super();
+		this.location = location;
+		this.salesId = salesId;
+		this.orderLineId = orderLineId;
+		this.status = WorkOrderStatus.OPEN;
+		this.originalQuantity = originalQuantity;
+		this.completedQuantity = -1;
+		this.dueDate = dueDate;
+		this.assemblyId = assemblyId;
+		this.version = 0;
+	}
+
 
 	public int getId() {
 		return id;

@@ -49,19 +49,19 @@ public abstract class ResourceITBase {
 	
 	// @formatter:off
 	private static List<Component> setupComponents = Arrays.asList(
-			new Component("Part 1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part 2", "The 2nd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part 3", "The 3rd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
+			new Component("Part1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part2", "The 2nd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part3", "The 3rd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
 			);
 	private static List<Assembly> setupAssemblies = Arrays.asList(
-			new Assembly("Assembly 1", "Assembly 1 which is build from 3 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Assembly("Assembly 2", "Assembly 2 which is build from 2 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
+			new Assembly("Assembly1", "Assembly 1 which is build from 3 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Assembly("Assembly2", "Assembly 2 which is build from 2 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
 			);
 	@SuppressWarnings("serial")
 	private static Map<String, List<String>> setupBoms = new HashMap<String, List<String>>() {
 		{
-			put("Assembly 1", Arrays.asList("Part 1", "Part 2", "Part 3"));
-			put("Assembly 2", Arrays.asList("Part 1", "Part 3"));
+			put("Assembly1", Arrays.asList("Part1", "Part2", "Part3"));
+			put("Assembly2", Arrays.asList("Part1", "Part3"));
 		}
 	};
 	// @formatter:on

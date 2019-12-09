@@ -73,7 +73,7 @@ public class WorkOrderController {
 	@Consumes(MediaType.APPLICATION_JSON)
 //	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response scheduleWorkOrder(WorkOrder workOrder, @Context UriInfo uriInfo) {
-		// TODO validate workOrder (there some fields which has to be set for an initial workorder - have a look in the coinstructors or workorder.json)
+		// TODO validate workOrder (there are some fields which has to be set for an initial workorder - have a look in the constructors or workorder.json)
 		Integer id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
 		JsonObjectBuilder builder = Json.createObjectBuilder();
 		builder.add("id", id);

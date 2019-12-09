@@ -66,9 +66,9 @@ public class ComponentResourceIT extends ResourceITBase {
 	@Test
 	public void testDeliveryOfParts() {
 		ComponentDemands componentDemands = new ComponentDemands()
-				.setComponentDemands(Arrays.asList(new ComponentDemand(dbComponents.get("Part 1").getId(), 10, 1),
-						new ComponentDemand(dbComponents.get("Part 2").getId(), 20, 1),
-						new ComponentDemand(dbComponents.get("Part 3").getId(), 30, 1)));
+				.setComponentDemands(Arrays.asList(new ComponentDemand(dbComponents.get("Part1").getId(), 10, 1),
+						new ComponentDemand(dbComponents.get("Part2").getId(), 20, 1),
+						new ComponentDemand(dbComponents.get("Part3").getId(), 30, 1)));
 		WebTarget target = client.target(COMPONENT_URL);
 		Builder builder = target.path("/deliver").request(MediaType.APPLICATION_JSON);
 		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(componentDemands));
