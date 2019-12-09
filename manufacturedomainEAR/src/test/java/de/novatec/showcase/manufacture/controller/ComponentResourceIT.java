@@ -26,7 +26,7 @@ import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.dto.InventoryPK;
 
-public class ComponentReourceIT extends ResourceITBase {
+public class ComponentResourceIT extends ResourceITBase {
 
 	@Test
 	public void testGetComponent() {
