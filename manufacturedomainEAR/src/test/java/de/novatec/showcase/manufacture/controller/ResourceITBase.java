@@ -49,9 +49,9 @@ public abstract class ResourceITBase {
 	
 	// @formatter:off
 	private static List<Component> setupComponents = Arrays.asList(
-			new Component("Part 1", "The 1st part ", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part 2", "The 2nd part ", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part 3", "The 3rd part ", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
+			new Component("Part 1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part 2", "The 2nd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part 3", "The 3rd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
 			);
 	private static List<Assembly> setupAssemblies = Arrays.asList(
 			new Assembly("Assembly 1", "Assembly 1 which is build from 3 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),

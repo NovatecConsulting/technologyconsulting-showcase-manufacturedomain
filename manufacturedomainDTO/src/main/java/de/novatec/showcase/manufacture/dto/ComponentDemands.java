@@ -10,8 +10,9 @@ public class ComponentDemands {
 		return componentDemands;
 	}
 
-	public void setComponentDemands(List<ComponentDemand> componentDemands) {
+	public ComponentDemands setComponentDemands(List<ComponentDemand> componentDemands) {
 		this.componentDemands = componentDemands;
+		return this;
 	}
 
 
