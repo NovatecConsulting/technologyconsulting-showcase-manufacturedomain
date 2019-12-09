@@ -22,6 +22,7 @@ public class WorkOrder implements Serializable {
 
 	@JsonFormat(pattern = GlobalConstants.DATE_FORMAT, locale = "de_DE")
 	private Calendar dueDate;
+	@JsonFormat(pattern = GlobalConstants.DATE_FORMAT, locale = "de_DE")
 	private Calendar startDate;
 	private String assemblyId;
 	private int version;
