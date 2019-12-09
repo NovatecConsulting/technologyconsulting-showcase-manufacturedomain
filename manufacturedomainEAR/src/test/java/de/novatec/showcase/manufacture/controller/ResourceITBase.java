@@ -214,7 +214,7 @@ public abstract class ResourceITBase {
 
 	// test for delivering parts for a workorder
 
-	// test for inventory get methods (bom/inventory/component/assembly/workorder)
+	// test for get methods (bom/inventory/component/assembly/workorder)
 
 	// security test cases allowed/not allowed
 

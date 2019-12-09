@@ -17,56 +17,56 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 
-import de.novatec.showcase.manufacture.dto.Component;
+import de.novatec.showcase.manufacture.dto.Assembly;
 import de.novatec.showcase.manufacture.dto.ComponentDemand;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
 
-public class ComponentReourceIT extends ResourceITBase {
+public class AssemblyResouceIT extends ResourceITBase {
 
 	@Test
-	public void testGetComponent() {
-		for (Entry<String, Component> entry : dbComponents.entrySet()) {
-			Component component = entry.getValue();
-			WebTarget target = client.target(COMPONENT_URL).path(component.getId());
+	public void testGetAssembly() {
+		for (Entry<String, Assembly> entry : dbAssemblies.entrySet()) {
+			Assembly assembly = entry.getValue();
+			WebTarget target = client.target(ASSEMBLY_URL).path(assembly.getId());
 			Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
-			assertResponse200(COMPONENT_URL, response);
-			assertEquals(component, response.readEntity(Component.class));
+			assertResponse200(ASSEMBLY_URL, response);
+			assertEquals(assembly, response.readEntity(Assembly.class));
 		}
 	}
 
 	@Test
-	public void testGetComponents() {
-		WebTarget target = client.target(COMPONENT_URL);
+	public void testGetAssemblies() {
+		WebTarget target = client.target(ASSEMBLY_URL);
 		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
-		assertResponse200(COMPONENT_URL, response);
-		assertTrue("There should be 5 Component at a minimum!", response.readEntity(new GenericType<List<Component>>() {
-		}).size() >= 5);
+		assertResponse200(ASSEMBLY_URL, response);
+		assertTrue("There should be 5 Component at a minimum!", response.readEntity(new GenericType<List<Assembly>>() {
+		}).size() >= 2);
 	}
 
 	@Test
-	public void testCreateComponent() {
-		Component component = new Component("Create Component Test Part", "The part from testCreateComponent", "1",
+	public void testCreateAssembly() {
+		Assembly assembly = new Assembly("Create Assembly Test Part", "The part from testCreateAssembly", "1",
 				Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1));
-		WebTarget target = client.target(COMPONENT_URL);
+		WebTarget target = client.target(ASSEMBLY_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(component));
-		assertResponse201(COMPONENT_URL, response);
+		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(assembly));
+		assertResponse201(ASSEMBLY_URL, response);
 
-		target = client.target(COMPONENT_URL)
+		target = client.target(ASSEMBLY_URL)
 				.path(Integer.valueOf(response.readEntity(JsonObject.class).getString("id")).toString());
 		response = target.request().get();
-		assertResponse200(COMPONENT_URL, response);
+		assertResponse200(ASSEMBLY_URL, response);
 	}
-
+	
 	@Test
 	public void testDeliveryOfParts() {
 		ComponentDemands componentDemands = new ComponentDemands()
 				.setComponentDemands(Arrays.asList(new ComponentDemand(dbComponents.get("Part 1").getId(), 10, 1),
 						new ComponentDemand(dbComponents.get("Part 2").getId(), 20, 1),
 						new ComponentDemand(dbComponents.get("Part 3").getId(), 30, 1)));
-		WebTarget target = client.target(COMPONENT_URL);
+		WebTarget target = client.target(ASSEMBLY_URL);
 		Builder builder = target.path("/deliver").request(MediaType.APPLICATION_JSON);
 		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(componentDemands));
-		assertResponse200(COMPONENT_URL, response);
+		assertResponse200(ASSEMBLY_URL, response);
 	}
 }
