@@ -28,10 +28,9 @@ public class Component implements Serializable {
 		super();
 	}
 
-	public Component(String id, String name, String description, String revision, Integer planner, Integer type,
+	public Component(String name, String description, String revision, Integer planner, Integer type,
 			Integer purchased, Integer lomark, Integer himark) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.revision = revision;
@@ -122,6 +121,14 @@ public class Component implements Serializable {
 
 	void addComponentBoms(Collection<Bom> componentBoms) {
 		this.componentBoms.addAll(componentBoms);
+	}
+
+	public void setComponentBoms(Collection<Bom> componentBoms) {
+		this.componentBoms = componentBoms;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	public int getVersion() {

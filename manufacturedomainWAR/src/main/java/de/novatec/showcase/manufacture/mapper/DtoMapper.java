@@ -76,14 +76,22 @@ abstract public class DtoMapper {
 		return mapper.map(assembly, Assembly.class);
 	}
 
-	public static Inventory mapToInventoryDto(de.novatec.showcase.manufacture.ejb.entity.Inventory component) {
-		return mapper.map(component, Inventory.class);
+	public static Inventory mapToInventoryDto(de.novatec.showcase.manufacture.ejb.entity.Inventory inventoryPK) {
+		return mapper.map(inventoryPK, Inventory.class);
 	}
 
+	public static InventoryPK mapToInventoryPKDto(de.novatec.showcase.manufacture.ejb.entity.InventoryPK inventoryPK) {
+		return mapper.map(inventoryPK, InventoryPK.class);
+	}
+	
 	public static BomPK mapToBomPKDto(de.novatec.showcase.manufacture.ejb.entity.BomPK bomPK) {
 		return mapper.map(bomPK, BomPK.class);
 	}
 
+	public static Bom mapToBomDto(de.novatec.showcase.manufacture.ejb.entity.Bom bom) {
+		return mapper.map(bom, Bom.class);
+	}
+	
 	public static WorkOrder mapToWorkOrderDto(de.novatec.showcase.manufacture.ejb.entity.WorkOrder workorder) {
 		return mapper.map(workorder, WorkOrder.class);
 	}
@@ -101,6 +109,10 @@ abstract public class DtoMapper {
 		return mapper.map(bom, de.novatec.showcase.manufacture.ejb.entity.Bom.class);
 	}
 
+	public static de.novatec.showcase.manufacture.ejb.entity.BomPK mapToBomPKEntity(BomPK bom) {
+		return mapper.map(bom, de.novatec.showcase.manufacture.ejb.entity.BomPK.class);
+	}
+	
 	public static de.novatec.showcase.manufacture.ejb.entity.Component mapToComponentEntity(Component components) {
 		return mapper.map(components, de.novatec.showcase.manufacture.ejb.entity.Component.class);
 	}

@@ -13,16 +13,6 @@ public class BomPK implements Serializable {
 
 	public BomPK() {
 		super();
-		this.lineNo = -1;
-		this.assemblyId = null;
-		this.componentId = null;
-	}
-
-	public BomPK(int lineNo, String assemblyId, String componentId) {
-		super();
-		this.lineNo = lineNo;
-		this.assemblyId = assemblyId;
-		this.componentId = componentId;
 	}
 
 	public int getLineNo() {

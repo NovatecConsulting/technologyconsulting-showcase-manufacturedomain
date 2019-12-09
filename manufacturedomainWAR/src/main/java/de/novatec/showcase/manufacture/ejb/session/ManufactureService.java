@@ -9,6 +9,7 @@ import de.novatec.showcase.manufacture.ejb.entity.BomPK;
 import de.novatec.showcase.manufacture.ejb.entity.Component;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
+import de.novatec.showcase.manufacture.ejb.entity.InventoryPK;
 
 public interface ManufactureService {
 	Component findComponent(String id);
@@ -33,11 +34,11 @@ public interface ManufactureService {
 
 	String createAssembly(Assembly assembly);
 
-	String createInventory(Inventory inventory);
+	InventoryPK createInventory(Inventory inventory);
 
 	BomPK createBom(Bom bom);
 
-	void addBomToComponent(Integer lineNo, String assemblyId, String componentId);
-
 	Bom findBom(BomPK bomPK);
+
+	void addBomToComponent(BomPK bomPK);
 }

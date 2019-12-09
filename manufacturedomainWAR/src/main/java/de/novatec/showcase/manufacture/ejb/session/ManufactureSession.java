@@ -11,7 +11,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import de.novatec.showcase.manufacture.ejb.entity.Assembly;
 import de.novatec.showcase.manufacture.ejb.entity.Bom;
@@ -120,11 +119,11 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public String createInventory(Inventory inventory) {
+	public InventoryPK createInventory(Inventory inventory) {
 		if (this.findComponent(inventory.getComponentId()) != null) {
 			em.persist(inventory);
 			em.flush();
-			return inventory.getComponentId();
+			return inventory.getPk();
 		} else {
 			return null;
 		}
@@ -145,10 +144,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void addBomToComponent(Integer lineNo, String assemblyId, String componentId) {
-		BomPK bomPK = new BomPK(lineNo, assemblyId, componentId);
-		Component component = this.findComponent(componentId);
-		Assembly assembly = this.findAssembly(assemblyId);
+	public void addBomToComponent(BomPK bomPK) {
+		Component component = this.findComponent(bomPK.getComponentId());
+		Assembly assembly = this.findAssembly(bomPK.getAssemblyId());
 		Bom bom = this.findBom(bomPK);
 		if (component != null && assembly != null && bom != null) {
 			component.addComponentBoms(Arrays.asList(bom));
@@ -157,5 +155,5 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		}
 		return;
 	}
-
+	
 }

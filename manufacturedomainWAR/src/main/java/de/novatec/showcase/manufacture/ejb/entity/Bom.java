@@ -8,7 +8,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
@@ -63,7 +62,10 @@ public class Bom implements Serializable{
 	public Bom(int lineNo, int quantity, String engChange, int opsNo,
 			String opsDesc, Component component, Assembly assembly, int version) {
 		super();
-		this.pk = new BomPK(lineNo,assembly.getId(),component.getId());
+		this.pk = new BomPK();
+		this.pk.setLineNo(lineNo);
+		this.pk.setAssemblyId(assembly.getId());
+		this.pk.setComponentId(component.getId());
 		this.quantity = quantity;
 		this.engChange = engChange;
 		this.opsNo = opsNo;

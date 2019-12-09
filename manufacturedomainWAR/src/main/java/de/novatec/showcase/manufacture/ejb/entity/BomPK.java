@@ -10,15 +10,13 @@ public class BomPK implements Serializable {
 
 	private static final long serialVersionUID = 4261754763932213045L;
 
-	private int lineNo;
+	private int lineNo = -1;
 	private String assemblyId;
 	private String componentId;
-
-	public BomPK() {
+	
+	public BomPK()
+	{
 		super();
-		this.lineNo = -1;
-		this.assemblyId = null;
-		this.componentId = null;
 	}
 
 	public BomPK(int lineNo, String assemblyId, String componentId) {

@@ -30,7 +30,7 @@ public class Inventory implements Serializable{
 		@AttributeOverride(name="location", column=@Column(name="IN_LOCATION"))
 	})
 	@EmbeddedId
-	InventoryPK pk;
+	private InventoryPK pk;
 	
 	@Column(name="IN_ACT_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -131,6 +131,18 @@ public class Inventory implements Serializable{
 	
 	public int getVersion(){
 		return this.version;
+	}
+
+	public InventoryPK getPk() {
+		return pk;
+	}
+
+	public void setQuantityOnHand(int quantityOnHand) {
+		this.quantityOnHand = quantityOnHand;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
 
 	@Override

@@ -36,7 +36,6 @@ public class AssemblyController extends BaseComponentController {
 					.build();
 		}
 		Collection<de.novatec.showcase.manufacture.ejb.entity.Bom> boms = assembly.getAssemblyBoms();
-		System.out.println(boms);
 		return Response.ok().entity(DtoMapper.mapToAssemblyDto(assembly)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 

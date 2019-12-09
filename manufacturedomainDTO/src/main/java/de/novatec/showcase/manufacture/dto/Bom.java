@@ -3,6 +3,8 @@ package de.novatec.showcase.manufacture.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.json.bind.annotation.JsonbTransient;
+
 public class Bom implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -19,6 +21,22 @@ public class Bom implements Serializable {
 	public Bom() {
 		super();
 	}
+	
+	public Bom(int lineNo, int quantity, String engChange, int opsNo,
+			String opsDesc, Component component, Assembly assembly, int version) {
+		super();
+		this.pk = new BomPK();
+		this.pk.setLineNo(lineNo);
+		this.pk.setAssemblyId(assembly.getId());
+		this.pk.setComponentId(component.getId());
+		this.quantity = quantity;
+		this.engChange = engChange;
+		this.opsNo = opsNo;
+		this.opsDesc = opsDesc;
+		this.component = component;
+		this.assembly = assembly;
+		this.version = version;
+	}
 
 	public BomPK getPk() {
 		return pk;
@@ -28,6 +46,7 @@ public class Bom implements Serializable {
 		this.pk = pk;
 	}
 
+	@JsonbTransient
 	public int getLineNo() {
 		return this.pk.getLineNo();
 	}

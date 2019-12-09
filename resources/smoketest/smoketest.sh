@@ -18,12 +18,12 @@ curl --header "Content-Type: application/json" --request POST --data @data/bom_a
 curl --header "Content-Type: application/json" --request POST --data @data/bom_assembly_2_part_2.json http://localhost:9080/manufacturedomain/component/bom
 
 # add boms to assembly
-curl --header "Content-Type: application/json" --request POST http://localhost:9080/manufacturedomain/component/bom/1/4/1
-curl --header "Content-Type: application/json" --request POST http://localhost:9080/manufacturedomain/component/bom/2/4/2
-curl --header "Content-Type: application/json" --request POST http://localhost:9080/manufacturedomain/component/bom/3/4/3
+curl --header "Content-Type: application/json" --request POST --data @data/bomPK_1_4_1.json http://localhost:9080/manufacturedomain/component/bom/addToComponent
+curl --header "Content-Type: application/json" --request POST --data @data/bomPK_2_4_2.json http://localhost:9080/manufacturedomain/component/bom/addToComponent
+curl --header "Content-Type: application/json" --request POST --data @data/bomPK_3_4_3.json http://localhost:9080/manufacturedomain/component/bom/addToComponent
 
-curl --header "Content-Type: application/json" --request POST http://localhost:9080/manufacturedomain/component/bom/1/5/1
-curl --header "Content-Type: application/json" --request POST http://localhost:9080/manufacturedomain/component/bom/2/5/3
+curl --header "Content-Type: application/json" --request POST --data @data/bomPK_1_5_1.json http://localhost:9080/manufacturedomain/component/bom/addToComponent
+curl --header "Content-Type: application/json" --request POST --data @data/bomPK_2_5_3.json http://localhost:9080/manufacturedomain/component/bom/addToComponent
 
 # create inventory with component
 curl --header "Content-Type: application/json" --request POST --data @data/inventory_component_part_1.json http://localhost:9080/manufacturedomain/component/inventory
