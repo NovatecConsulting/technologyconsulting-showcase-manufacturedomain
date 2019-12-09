@@ -182,6 +182,7 @@ public abstract class ResourceITBase {
 //		builder = asAdmin(target.request(MediaType.APPLICATION_JSON));
 		builder = target.request(MediaType.APPLICATION_JSON);
 		response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(bomPK));
+		assertResponse200(BOM_URL, response);
 		return bom;
 	}
 
@@ -213,8 +214,6 @@ public abstract class ResourceITBase {
 	// test for canceling a workorder
 
 	// test for delivering parts for a workorder
-
-	// test for get methods (bom/inventory/component/assembly/workorder)
 
 	// security test cases allowed/not allowed
 
