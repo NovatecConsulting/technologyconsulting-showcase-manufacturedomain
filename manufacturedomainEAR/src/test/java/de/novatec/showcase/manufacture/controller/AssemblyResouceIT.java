@@ -39,10 +39,19 @@ public class AssemblyResouceIT extends ResourceITBase {
 		WebTarget target = client.target(ASSEMBLY_URL);
 		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
 		assertResponse200(ASSEMBLY_URL, response);
-		assertTrue("There should be 5 Component at a minimum!", response.readEntity(new GenericType<List<Assembly>>() {
+		assertTrue("There should be 2 Assembly at a minimum!", response.readEntity(new GenericType<List<Assembly>>() {
 		}).size() >= 2);
 	}
 
+	@Test
+	public void testGetAllAssemblyIds() {
+		WebTarget target = client.target(ASSEMBLY_URL);
+		Response response = target.path("ids").request(MediaType.APPLICATION_JSON_TYPE).get();
+		assertResponse200(ASSEMBLY_URL, response);
+		assertTrue("There should be 2 Assembly ids at a minimum!", response.readEntity(new GenericType<List<String>>() {
+		}).size() >= 2);
+	}
+	
 	@Test
 	public void testCreateAssembly() {
 		Assembly assembly = new Assembly("Create Assembly Test Part", "The part from testCreateAssembly", "1",

@@ -54,14 +54,6 @@ public class ComponentController extends BaseComponentController {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/deliver")
-	public Response deliver(List<ComponentDemand> componentDemands) {
-		bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands));
-		return Response.ok().build();
-	}
-
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 //	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response createComponent(Component component, @Context UriInfo uriInfo) {
