@@ -36,6 +36,14 @@ public class InventoryPK implements Serializable {
 		return location;
 	}
 
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
+	}
+
+	public void setLocation(Integer location) {
+		this.location = location;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(componentId, location);

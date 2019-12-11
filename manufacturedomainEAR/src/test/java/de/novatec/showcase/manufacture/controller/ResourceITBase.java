@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -19,7 +18,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.provider.jsrjsonp.JsrJsonpProvider;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -49,19 +47,23 @@ public abstract class ResourceITBase {
 	
 	// @formatter:off
 	private static List<Component> setupComponents = Arrays.asList(
-			new Component("Part1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part2", "The 2nd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Component("Part3", "The 3rd part", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
+			new Component("Part1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part2", "The 2nd part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part3", "The 3rd part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Component("Part4", "The 4th part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(10), Integer.valueOf(100)),
+			new Component("Part5", "The 5th part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(10), Integer.valueOf(100))
 			);
 	private static List<Assembly> setupAssemblies = Arrays.asList(
 			new Assembly("Assembly1", "Assembly 1 which is build from 3 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
-			new Assembly("Assembly2", "Assembly 2 which is build from 2 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1))
+			new Assembly("Assembly2", "Assembly 2 which is build from 2 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
+			new Assembly("Assembly3", "Assembly 3 which is build from 2 parts", "1", Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(10), Integer.valueOf(100))
 			);
 	@SuppressWarnings("serial")
 	private static Map<String, List<String>> setupBoms = new HashMap<String, List<String>>() {
 		{
 			put("Assembly1", Arrays.asList("Part1", "Part2", "Part3"));
 			put("Assembly2", Arrays.asList("Part1", "Part3"));
+			put("Assembly3", Arrays.asList("Part4", "Part5"));
 		}
 	};
 	// @formatter:on
@@ -74,7 +76,6 @@ public abstract class ResourceITBase {
 	@BeforeClass
 	public static void beforeClass() {
 		client = ClientBuilder.newClient();
-		client.register(JsrJsonpProvider.class);
 		client.register(JacksonJsonProvider.class);
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basicBuilder().build();
 		client.register(feature);
@@ -109,11 +110,11 @@ public abstract class ResourceITBase {
 		}
 
 		for (Entry<String, Component> entry : dbComponents.entrySet()) {
-			dbInventories.put(entry.getValue().getName(), createInventoy(entry.getValue()));
+			dbInventories.put(entry.getValue().getName(), createInventory(entry.getValue()));
 		}
 		
 		for (Entry<String, Assembly> entry : dbAssemblies.entrySet()) {
-			dbInventories.put(entry.getValue().getName(), createInventoy(entry.getValue()));
+			dbInventories.put(entry.getValue().getName(), createInventory(entry.getValue()));
 		}
 
 		//reload and store locally each dbComponent/dbAssembly so that we have all connections between objects for comparing in tests!
@@ -139,7 +140,7 @@ public abstract class ResourceITBase {
 		assertResponse201(COMPONENT_URL, response);
 
 		target = client.target(COMPONENT_URL)
-				.path(Integer.valueOf(response.readEntity(JsonObject.class).getString("id")).toString());
+				.path(response.readEntity(Component.class).getId()); 
 //		response = asAdmin(target.request()).get();
 		response = target.request().get();
 		assertResponse200(COMPONENT_URL, response);
@@ -154,7 +155,7 @@ public abstract class ResourceITBase {
 		assertResponse201(ASSEMBLY_URL, response);
 
 		target = client.target(ASSEMBLY_URL)
-				.path(Integer.valueOf(response.readEntity(JsonObject.class).getString("id")).toString());
+				.path(Integer.valueOf(response.readEntity(Assembly.class).getId()).toString());
 //		response = asAdmin(target.request()).get();
 		response = target.request().get();
 		assertResponse200(ASSEMBLY_URL, response);
@@ -186,7 +187,7 @@ public abstract class ResourceITBase {
 		return bom;
 	}
 
-	protected static Inventory createInventoy(Component component) {
+	protected static Inventory createInventory(Component component) {
 		WebTarget target = client.target(INVENTORY_URL);
 		Inventory inventory = new Inventory(1, constantDate(), 1, 0, 10, component);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
@@ -202,10 +203,6 @@ public abstract class ResourceITBase {
 
 		return response.readEntity(Inventory.class);
 	}
-
-	// test scheduling a workorder
-	// with enough parts
-	// with not enough parts
 
 	// tests setting the various states of a workorder
 

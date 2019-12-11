@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
-import javax.json.bind.annotation.JsonbTransient;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
@@ -35,7 +34,9 @@ public class Inventory implements Serializable {
 	public Inventory(Integer location, Calendar accDate, int accCode, int quantityInOrder, int quantityOnHand,
 			Component component) {
 		super();
-		this.pk = new InventoryPK(component.getId(), location);
+		this.pk = new InventoryPK();
+		this.pk.setComponentId(component.getId());
+		this.pk.setLocation(location);
 		this.accDate = accDate;
 		this.accCode = accCode;
 		this.quantityInOrder = quantityInOrder;
@@ -44,7 +45,7 @@ public class Inventory implements Serializable {
 		this.component = component;
 	}
 
-	@JsonbTransient
+	@JsonIgnore
 	public String getComponentId() {
 		return this.pk.getComponentId();
 	}
@@ -57,7 +58,7 @@ public class Inventory implements Serializable {
 		this.component = component;
 	}
 
-	@JsonbTransient
+	@JsonIgnore
 	public int getLocation() {
 		return this.pk.getLocation();
 	}

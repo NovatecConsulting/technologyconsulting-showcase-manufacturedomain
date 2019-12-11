@@ -3,8 +3,6 @@ package de.novatec.showcase.manufacture.controller;
 import java.util.Collection;
 
 import javax.ejb.EJB;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;

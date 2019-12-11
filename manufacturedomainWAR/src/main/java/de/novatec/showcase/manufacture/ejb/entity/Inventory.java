@@ -60,7 +60,9 @@ public class Inventory implements Serializable{
 	public Inventory(Integer location, Calendar accDate, int accCode,
 			int quantityInOrder, int quantityOnHand, Component component) {
 		super();
-		this.pk = new InventoryPK(component.getId(), location);
+		this.pk = new InventoryPK();
+		this.pk.setComponentId(component.getId());
+		this.pk.setLocation(location);
 		this.accDate = accDate;
 		this.accCode = accCode;
 		this.quantityInOrder = quantityInOrder;
@@ -135,6 +137,10 @@ public class Inventory implements Serializable{
 
 	public InventoryPK getPk() {
 		return pk;
+	}
+	
+	public void setPk(InventoryPK pk) {
+		this.pk = pk;
 	}
 
 	public void setQuantityOnHand(int quantityOnHand) {

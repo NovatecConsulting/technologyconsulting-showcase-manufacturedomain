@@ -14,17 +14,17 @@ public class InventoryPK implements Serializable{
 		
 	}
 
-	public InventoryPK(String componentId, Integer location) {
-		super();
-		this.componentId = componentId;
-		this.location = location;
-	}
+//	public InventoryPK(String componentId, Integer location) {
+//		super();
+//		this.componentId = componentId;
+//		this.location = location;
+//	}
 	
-	public InventoryPK(InventoryPK pk){
-		super();
-		this.componentId = pk.componentId;
-		this.location = pk.location;
-	}
+//	public InventoryPK(InventoryPK pk){
+//		super();
+//		this.componentId = pk.componentId;
+//		this.location = pk.location;
+//	}
 
 	public String getComponentId() {
 		return componentId;

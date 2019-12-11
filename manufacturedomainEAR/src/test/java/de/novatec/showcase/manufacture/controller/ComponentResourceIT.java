@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -44,7 +43,7 @@ public class ComponentResourceIT extends ResourceITBase {
 		WebTarget target = client.target(COMPONENT_URL);
 		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
 		assertResponse200(COMPONENT_URL, response);
-		assertTrue("There should be 5 Component at a minimum!", response.readEntity(new GenericType<List<Component>>() {
+		assertTrue("There should be 5 Component at a minimum!", response.readEntity(new GenericType<List<?>>() {
 		}).size() >= 5);
 	}
 
@@ -58,7 +57,7 @@ public class ComponentResourceIT extends ResourceITBase {
 		assertResponse201(COMPONENT_URL, response);
 
 		target = client.target(COMPONENT_URL)
-				.path(Integer.valueOf(response.readEntity(JsonObject.class).getString("id")).toString());
+				.path(Integer.valueOf(response.readEntity(Component.class).getId()).toString());
 		response = target.request().get();
 		assertResponse200(COMPONENT_URL, response);
 	}
@@ -86,12 +85,13 @@ public class ComponentResourceIT extends ResourceITBase {
 
 	@Test
 	public void testGetBom() {
-		WebTarget target = client.target(BOM_URL + "/1/1/4");
+		//TODO remove static ids
+		WebTarget target = client.target(BOM_URL+"/1/1/6");
 		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
 		assertResponse200(BOM_URL, response);
 		Bom bom = response.readEntity(Bom.class);
 		assertEquals("LineNo should be 1", 1, bom.getLineNo());
-		assertEquals("Assembly id should be 4", "4", bom.getPk().getAssemblyId());
+		assertEquals("Assembly id should be 6", "6", bom.getPk().getAssemblyId());
 		assertEquals("Component id should be 1", "1", bom.getPk().getComponentId());
 	}
 	

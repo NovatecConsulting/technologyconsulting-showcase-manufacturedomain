@@ -1,11 +1,8 @@
 package de.novatec.showcase.manufacture.controller;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.ManagedBean;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,7 +15,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import de.novatec.showcase.manufacture.dto.Component;
-import de.novatec.showcase.manufacture.dto.ComponentDemand;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
@@ -59,8 +55,6 @@ public class ComponentController extends BaseComponentController {
 	public Response createComponent(Component component, @Context UriInfo uriInfo) {
 		// TODO validate component
 		String id = bean.createComponent(DtoMapper.mapToComponentEntity(component));
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("id", id);
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(builder.build()).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findComponent(id)).build();
 	}
 }

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+// This is done for the case of the Inventory.getComponent call which could also be an Assembly -> Jockson does not recocnize this...
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Component implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -17,7 +21,6 @@ public class Component implements Serializable {
 	private Integer type;
 	private Integer purchased;
 	private Integer lomark;
-
 	private Integer himark;
 
 	private Collection<Bom> componentBoms;
@@ -28,8 +31,8 @@ public class Component implements Serializable {
 		super();
 	}
 
-	public Component(String name, String description, String revision, Integer planner, Integer type,
-			Integer purchased, Integer lomark, Integer himark) {
+	public Component(String name, String description, String revision, Integer planner, Integer type, Integer purchased,
+			Integer lomark, Integer himark) {
 		super();
 		this.name = name;
 		this.description = description;

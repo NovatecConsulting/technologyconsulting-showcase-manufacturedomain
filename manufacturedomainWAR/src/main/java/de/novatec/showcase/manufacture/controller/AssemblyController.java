@@ -3,8 +3,6 @@ package de.novatec.showcase.manufacture.controller;
 import java.util.Collection;
 
 import javax.annotation.ManagedBean;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,7 +33,6 @@ public class AssemblyController extends BaseComponentController {
 			return Response.status(Response.Status.NOT_FOUND).entity("Assembly with id '" + assemblyId + "' not found!")
 					.build();
 		}
-		Collection<de.novatec.showcase.manufacture.ejb.entity.Bom> boms = assembly.getAssemblyBoms();
 		return Response.ok().entity(DtoMapper.mapToAssemblyDto(assembly)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
@@ -69,9 +66,7 @@ public class AssemblyController extends BaseComponentController {
 	public Response createAssembly(Assembly assembly, @Context UriInfo uriInfo) {
 		// TODO validate assembly
 		String id = bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly));
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("id", id);
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(builder.build()).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findAssembly(id)).build();
 	}
 
 }

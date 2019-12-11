@@ -85,14 +85,14 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	 * @return 0: nothing needs to be done<br>
 	 *         >0: quantity which must be ordered
 	 */
-	private int getQuantityToBeOrdered(Inventory inventory, int quantity) {
+	private int getQuantityToBeOrdered(Inventory inventory, int requiredQuantity) {
 		// check low water mark
-		if ((inventory.getQuantityInOrder() + inventory.getQuantityOnHand() - quantity) < inventory.getComponent()
+		if ((inventory.getQuantityInOrder() + inventory.getQuantityOnHand() - requiredQuantity) < inventory.getComponent()
 				.getLomark()) {
 			return inventory.getComponent().getHimark() - inventory.getQuantityInOrder()
 					- inventory.getQuantityOnHand();
 		}
-		if ((inventory.getQuantityOnHand() - quantity) < 0) {
+		if ((inventory.getQuantityOnHand() - requiredQuantity) < 0) {
 			// should rollback the txn
 			throw new RuntimeException("##### error in inventory: compId:" + inventory.getComponentId() + " location:"
 					+ inventory.getLocation() + " -> not enough parts available");

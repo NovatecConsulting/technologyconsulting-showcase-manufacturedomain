@@ -3,7 +3,7 @@ package de.novatec.showcase.manufacture.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.json.bind.annotation.JsonbTransient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Bom implements Serializable {
 
@@ -46,7 +46,7 @@ public class Bom implements Serializable {
 		this.pk = pk;
 	}
 
-	@JsonbTransient
+	@JsonIgnore
 	public int getLineNo() {
 		return this.pk.getLineNo();
 	}

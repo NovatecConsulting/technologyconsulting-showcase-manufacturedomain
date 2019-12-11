@@ -25,7 +25,8 @@ abstract public class DtoMapper {
 	static {
 		mapperFactory = new DefaultMapperFactory.Builder().build();
 		mapperFactory.classMap(Component.class, de.novatec.showcase.manufacture.ejb.entity.Component.class ).byDefault().register();
-		mapperFactory.classMap(Assembly.class, de.novatec.showcase.manufacture.ejb.entity.Assembly.class ).byDefault().register();
+		mapperFactory.classMap(Assembly.class, de.novatec.showcase.manufacture.ejb.entity.Assembly.class ).
+		use(Component.class, de.novatec.showcase.manufacture.ejb.entity.Component.class).byDefault().register();
 		mapperFactory.classMap(InventoryPK.class, de.novatec.showcase.manufacture.ejb.entity.InventoryPK.class ).byDefault().register();
 		mapperFactory.classMap(Inventory.class, de.novatec.showcase.manufacture.ejb.entity.Inventory.class).byDefault().register();
 		mapperFactory.classMap(BomPK.class, de.novatec.showcase.manufacture.ejb.entity.BomPK.class ).byDefault().register();
