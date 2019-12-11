@@ -33,7 +33,7 @@ public class WorkOrder implements Serializable {
 	@Column(name = "WO_NUMBER")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "WO_ID_GEN")
 	@TableGenerator(name = "WO_ID_GEN", table = "U_SEQUENCES", pkColumnName = "s_id", valueColumnName = "s_nextnum", pkColumnValue = "WO_SEQ", allocationSize = 1)
-	private int id;
+	private Integer id;
 
 	@Column(name = "WO_LOCATION")
 	private int location;
@@ -138,7 +138,7 @@ public class WorkOrder implements Serializable {
 	 * @param assemblyId
 	 * @param version
 	 */
-	public WorkOrder(int id, int location, int salesId, int orderLineId, WorkOrderStatus status, int originalQuantity,
+	public WorkOrder(Integer id, int location, int salesId, int orderLineId, WorkOrderStatus status, int originalQuantity,
 			int completedQuantity, Calendar dueDate, Calendar startDate, String assemblyId, int version) {
 		super();
 		this.id = id;
@@ -154,7 +154,7 @@ public class WorkOrder implements Serializable {
 		this.version = version;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 

@@ -103,9 +103,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	@Override
 	public void cancelWorkOrder(Integer workOrderId) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
-
-		// can't cancel a completed, archived or canceled order
-		if (isWorkOrderCancelable(workOrder)) {
+		if (isCancelable(workOrder)) {
 			Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
 			for (Bom bom : assembly.getAssemblyBoms()) {
 				int compQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
@@ -119,19 +117,18 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	public void completeWorkOrder(Integer workOrderId, int manufacturedQuantity) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCompletable(workOrder)) {
-			return;
+			workOrder.setStatusCompleted();
+			workOrder.setCompletedQuantity(manufacturedQuantity);
+			if (doesNotBelongToOrderFromOrderDomain(workOrder)) {
+				Inventory inventory = manufactureSession.getInventory(workOrder.getAssemblyId(), workOrder.getLocation());
+				inventory.addQuantityOnHand(manufacturedQuantity);
+			}
+			em.flush();
 		}
-		workOrder.setStatusCompleted();
-		workOrder.setCompletedQuantity(manufacturedQuantity);
-		if (doesNotBelongToOrderFromOrderDomain(workOrder)) {
-			Inventory inventory = manufactureSession.getInventory(workOrder.getAssemblyId(), workOrder.getLocation());
-			inventory.addQuantityOnHand(manufacturedQuantity);
-		}
-		em.flush();
 	}
 
 	@Override
-	public void advanceWorkOrderStatus(int workOrderId) {
+	public void advanceWorkOrderStatus(Integer workOrderId) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 
 		if (isAdvanceable(workOrder)) {
@@ -147,7 +144,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		}
 	}
 
-	private boolean isWorkOrderCancelable(WorkOrder workOrder) {
+	private boolean isCancelable(WorkOrder workOrder) {
 		return workOrder.getStatus() != WorkOrderStatus.COMPLETED && workOrder.getStatus() != WorkOrderStatus.CANCELED
 				&& workOrder.getStatus() != WorkOrderStatus.ARCHIVED;
 	}
@@ -170,9 +167,9 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	private boolean isCompletable(WorkOrder workOrder) {
-		return workOrder.getStatus().equals(WorkOrderStatus.COMPLETED)
-				|| workOrder.getStatus().equals(WorkOrderStatus.CANCELED)
-				|| workOrder.getStatus().equals(WorkOrderStatus.ARCHIVED);
+		return !workOrder.getStatus().equals(WorkOrderStatus.COMPLETED)
+				&& !workOrder.getStatus().equals(WorkOrderStatus.CANCELED)
+				&& !workOrder.getStatus().equals(WorkOrderStatus.ARCHIVED);
 	}
 
 	/**

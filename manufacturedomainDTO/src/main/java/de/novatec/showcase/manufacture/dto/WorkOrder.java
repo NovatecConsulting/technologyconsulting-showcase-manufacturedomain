@@ -12,7 +12,7 @@ public class WorkOrder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private int id;
+	private Integer id;
 	private int location;
 	private int salesId;
 	private int orderLineId;
@@ -46,11 +46,11 @@ public class WorkOrder implements Serializable {
 	}
 
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

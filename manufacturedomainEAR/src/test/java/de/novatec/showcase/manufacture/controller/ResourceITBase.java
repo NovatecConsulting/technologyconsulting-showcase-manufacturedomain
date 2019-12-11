@@ -204,16 +204,6 @@ public abstract class ResourceITBase {
 		return response.readEntity(Inventory.class);
 	}
 
-	// tests setting the various states of a workorder
-
-	// test for completing a workorder
-
-	// test for canceling a workorder
-
-	// test for delivering parts for a workorder
-
-	// security test cases allowed/not allowed
-
 	public static void assertResponse200(String url, Response response) {
 		assertResponse(url, response, Response.Status.OK);
 	}

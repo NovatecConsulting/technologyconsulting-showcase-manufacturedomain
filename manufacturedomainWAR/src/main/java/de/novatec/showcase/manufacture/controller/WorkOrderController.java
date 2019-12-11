@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -75,9 +73,9 @@ public class WorkOrderController {
 	public Response scheduleWorkOrder(WorkOrder workOrder, @Context UriInfo uriInfo) {
 		// TODO validate workOrder (there are some fields which has to be set for an initial workorder - have a look in the constructors or workorder.json)
 		Integer id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
-		JsonObjectBuilder builder = Json.createObjectBuilder();
-		builder.add("id", id);
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(builder.build()).build();
+//		JsonObjectBuilder builder = Json.createObjectBuilder();
+//		builder.add("id", id);
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(id))).build();
 	}
 	
 	@DELETE
@@ -101,11 +99,12 @@ public class WorkOrderController {
 			@Context UriInfo uriInfo) {
 		bean.completeWorkOrder(workOrderId, manufacturedQuantity);
 		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workOrderId.intValue()));
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).build();
+		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).build();
 	}
 	
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Path(value = "advance_status/{id}")
 //	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response advanceStatus(@PathParam("id") Integer workorderId, @Context UriInfo uriInfo) {
