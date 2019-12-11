@@ -27,39 +27,33 @@
 	</dataSource>
 
 	<basicRegistry id="basic" realm="defaultRealm">
-<!-- 		<user name="admin" password="adminpwd" /> -->
-<!-- 		<user name="testuser" password="pwd" /> -->
+		<user name="admin" password="adminpwd" />
+		<user name="testuser" password="pwd" />
 
-<!-- 		<group name="ORDERDOMAIN.ITEM"> -->
-<!-- 			<member name="testuser" /> -->
-<!-- 		</group> -->
-<!-- 		<group name="ORDERDOMAIN.CUSTOMER"> -->
-<!-- 			<member name="testuser" /> -->
-<!-- 		</group> -->
-<!-- 		<group name="ORDERDOMAIN.ORDER"> -->
-<!-- 			<member name="testuser" /> -->
-<!-- 		</group> -->
-<!-- 		<group name="ORDERDOMAIN.ADMIN"> -->
-<!-- 			<member name="admin" /> -->
-<!-- 		</group> -->
+		<group name="MANUFACTUREDOMAIN.COMPONENT">
+			<member name="testuser" />
+		</group>
+		<group name="MANUFACTUREDOMAIN.WORKORDER">
+			<member name="testuser" />
+		</group>
+		<group name="MANUFACTUREDOMAIN.ADMIN">
+			<member name="admin" />
+		</group>
 	</basicRegistry>
 
 	<enterpriseApplication id="manufacturedomain"
 		location="manufacturedomainEAR.ear" name="manufacturedomainEAR.ear">
-<!-- 		<application-bnd> -->
-<!-- 			<security-role name="ORDERDOMAIN.ITEM"> -->
-<!-- 				<group name="ORDERDOMAIN.ITEM" /> -->
-<!-- 			</security-role> -->
-<!-- 			<security-role name="ORDERDOMAIN.CUSTOMER"> -->
-<!-- 				<group name="ORDERDOMAIN.CUSTOMER" /> -->
-<!-- 			</security-role> -->
-<!-- 			<security-role name="ORDERDOMAIN.ORDER"> -->
-<!-- 				<group name="ORDERDOMAIN.ORDER" /> -->
-<!-- 			</security-role> -->
-<!-- 			<security-role name="ORDERDOMAIN.ADMIN"> -->
-<!-- 				<group name="ORDERDOMAIN.ADMIN" /> -->
-<!-- 			</security-role> -->
-<!-- 		</application-bnd> -->
+		<application-bnd>
+			<security-role name="MANUFACTUREDOMAIN.COMPONENT">
+				<group name="MANUFACTUREDOMAIN.COMPONENT" />
+			</security-role>
+			<security-role name="MANUFACTUREDOMAIN.WORKORDER">
+				<group name="MANUFACTUREDOMAIN.WORKORDER" />
+			</security-role>
+			<security-role name="MANUFACTUREDOMAIN.ADMIN">
+				<group name="MANUFACTUREDOMAIN.ADMIN" />
+			</security-role>
+		</application-bnd>
 	</enterpriseApplication>
 
 </server>

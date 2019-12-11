@@ -3,6 +3,7 @@ package de.novatec.showcase.manufacture.controller;
 import java.util.Collection;
 
 import javax.annotation.ManagedBean;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
@@ -51,7 +53,7 @@ public class ComponentController extends BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response createComponent(Component component, @Context UriInfo uriInfo) {
 		// TODO validate component
 		String id = bean.createComponent(DtoMapper.mapToComponentEntity(component));

@@ -29,12 +29,12 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 1, constantDate(), dbAssemblies.get("Assembly1").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 
 		target = client.target(WORKORDER_URL)
 				.path(Integer.valueOf(response.readEntity(WorkOrder.class).getId()).toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 	}
 
@@ -43,11 +43,11 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 1, constantDate(), dbAssemblies.get("Assembly1").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 
 		target = client.target(WORKORDER_URL);
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertTrue("There should be 1 WorkOrder at a minimum!", response.readEntity(new GenericType<List<WorkOrder>>() {
 		}).size() >= 1);
@@ -58,11 +58,11 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 1, constantDate(), dbAssemblies.get("Assembly1").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 
 		target = client.target(WORKORDER_URL);
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertTrue("There should be 1 WorkOrder at a minimum!", response.readEntity(new GenericType<List<WorkOrder>>() {
 		}).size() >= 1);
@@ -73,14 +73,14 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 1, constantDate(), dbAssemblies.get("Assembly2").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 
 		Assembly assembly = dbAssemblies.get("Assembly2");
 		Collection<Bom> boms = assembly.getAssemblyBoms();
 		for (Bom bom : boms) {
 			target = client.target(INVENTORY_URL + bom.getPk().getComponentId() + "/1");
-			response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+			response = asTestUser(target.request(MediaType.APPLICATION_JSON_TYPE)).get();
 			assertResponse200(INVENTORY_URL, response);
 			Inventory inventory = response.readEntity(Inventory.class);
 			assertEquals("Quantity in order should be 0!", 0, inventory.getQuantityInOrder());
@@ -93,13 +93,13 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 2, constantDate(), dbAssemblies.get("Assembly3").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		Assembly assembly = dbAssemblies.get("Assembly3");
 		Collection<Bom> boms = assembly.getAssemblyBoms();
 		for (Bom bom : boms) {
 			target = client.target(INVENTORY_URL + bom.getPk().getComponentId() + "/1");
-			response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+			response = asTestUser(target.request(MediaType.APPLICATION_JSON_TYPE)).get();
 			assertResponse200(INVENTORY_URL, response);
 			Inventory inventory = response.readEntity(Inventory.class);
 			assertEquals("Quantity in order should be 90!", 90, inventory.getQuantityInOrder());
@@ -112,53 +112,53 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		WorkOrder workOrder = new WorkOrder(1, 1, 1, 1, constantDate(), dbAssemblies.get("Assembly1").getId());
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state OPEN", WorkOrderStatus.OPEN, workOrder.getStatus());
 
 		target = client.target(WORKORDER_URL).path("advance_status/" + workOrder.getId());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state STAGE1", WorkOrderStatus.STAGE1, workOrder.getStatus());
 
 		target = client.target(WORKORDER_URL).path("advance_status/" + workOrder.getId());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state STAGE2", WorkOrderStatus.STAGE2, workOrder.getStatus());
 
 		target = client.target(WORKORDER_URL).path("advance_status/" + workOrder.getId());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state STAGE3", WorkOrderStatus.STAGE3, workOrder.getStatus());
 
 		// should stay in WorkOrderStatus.STAGE3
 		target = client.target(WORKORDER_URL).path("advance_status/" + workOrder.getId());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state STAGE3", WorkOrderStatus.STAGE3, workOrder.getStatus());
 	}
@@ -169,23 +169,23 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		workOrder.setStatus(WorkOrderStatus.STAGE3);
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state OPEN", WorkOrderStatus.STAGE3, workOrder.getStatus());
 
 		// now complete the workorder
 		target = client.target(WORKORDER_URL).path(workOrder.getId() + "/" + workOrder.getOriginalQuantity());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state COMPLETED", WorkOrderStatus.COMPLETED, workOrder.getStatus());
 	}
@@ -196,23 +196,23 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		workOrder.setStatus(WorkOrderStatus.CANCELED);
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state OPEN", WorkOrderStatus.CANCELED, workOrder.getStatus());
 
 		// now complete the workorder
 		target = client.target(WORKORDER_URL).path(workOrder.getId() + "/" + workOrder.getOriginalQuantity());
-		response = target.request().method(HttpMethod.PUT);
+		response = asAdmin(target.request()).method(HttpMethod.PUT);
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state CANCELED", WorkOrderStatus.CANCELED, workOrder.getStatus());
 	}
@@ -223,23 +223,23 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		workOrder.setStatus(WorkOrderStatus.STAGE3);
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state OPEN", WorkOrderStatus.STAGE3, workOrder.getStatus());
 
 		// now complete the workorder
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().delete();
+		response = asAdmin(target.request()).delete();
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state CANCELED", WorkOrderStatus.CANCELED, workOrder.getStatus());
 	}
@@ -250,23 +250,23 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		workOrder.setStatus(WorkOrderStatus.COMPLETED);
 		WebTarget target = client.target(WORKORDER_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(workOrder));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(workOrder));
 		assertResponse201(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 		
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state OPEN", WorkOrderStatus.COMPLETED, workOrder.getStatus());
 		
 		// now complete the workorder
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().delete();
+		response = asAdmin(target.request()).delete();
 		assertResponse200(WORKORDER_URL, response);
 		workOrder = response.readEntity(WorkOrder.class);
 		
 		target = client.target(WORKORDER_URL).path(workOrder.getId().toString());
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state CANCELED", WorkOrderStatus.COMPLETED, workOrder.getStatus());
 	}

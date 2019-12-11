@@ -49,4 +49,3 @@ There is a little script smoketest.sh in the manufacturedomainParent\resources\s
 - replace formerly existing MDB/JMS code with REST clients to other domains (order, supplier)
 - Better REST Responses including status codes
 - some validations to avoid NPE's
-- add authentication and authorization

@@ -2,6 +2,7 @@ package de.novatec.showcase.manufacture.controller;
 
 import java.util.Collection;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
@@ -22,6 +24,7 @@ import de.novatec.showcase.manufacture.dto.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
+@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME})
 public abstract class BaseComponentController {
 
 	@EJB
@@ -86,7 +89,7 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "inventory")
 	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
 		InventoryPK inventoryPK = DtoMapper.mapToInventoryPKDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
@@ -100,7 +103,7 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "/bom")
 	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
 		BomPK bomPK = DtoMapper.mapToBomPKDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
@@ -116,7 +119,7 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "/bom/addToComponent")
 	public Response addBomToComponent(BomPK bomPK) {
 		bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
@@ -126,7 +129,7 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "/deliver")
 	public Response deliver(ComponentDemands componentDemands) {
 		bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));

@@ -120,14 +120,14 @@ public abstract class ResourceITBase {
 		//reload and store locally each dbComponent/dbAssembly so that we have all connections between objects for comparing in tests!
 		for (Entry<String, Component> entry : dbComponents.entrySet()) {
 			WebTarget target = client.target(COMPONENT_URL).path(entry.getValue().getId());
-			Response response = target.request().get();
+			Response response = asAdmin(target.request()).get();
 			assertResponse200(COMPONENT_URL, response);
 			dbComponents.put(entry.getValue().getName(), response.readEntity(Component.class));
 		}
 		
 		for (Entry<String, Assembly> entry : dbAssemblies.entrySet()) {
 			WebTarget target = client.target(ASSEMBLY_URL).path(entry.getValue().getId());
-			Response response = target.request().get();
+			Response response = asAdmin(target.request()).get();
 			assertResponse200(ASSEMBLY_URL, response);
 			dbAssemblies.put(entry.getValue().getName(), response.readEntity(Assembly.class));
 		}
@@ -136,13 +136,12 @@ public abstract class ResourceITBase {
 	protected static Component createComponent(Component component) {
 		WebTarget target = client.target(COMPONENT_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(component));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(component));
 		assertResponse201(COMPONENT_URL, response);
 
 		target = client.target(COMPONENT_URL)
 				.path(response.readEntity(Component.class).getId()); 
-//		response = asAdmin(target.request()).get();
-		response = target.request().get();
+		response = asAdmin(target.request()).get();
 		assertResponse200(COMPONENT_URL, response);
 
 		return response.readEntity(Component.class);
@@ -151,13 +150,12 @@ public abstract class ResourceITBase {
 	protected static Assembly createAssembly(Assembly assembly) {
 		WebTarget target = client.target(ASSEMBLY_URL);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(assembly));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(assembly));
 		assertResponse201(ASSEMBLY_URL, response);
 
 		target = client.target(ASSEMBLY_URL)
 				.path(Integer.valueOf(response.readEntity(Assembly.class).getId()).toString());
-//		response = asAdmin(target.request()).get();
-		response = target.request().get();
+		response = asAdmin(target.request()).get();
 		assertResponse200(ASSEMBLY_URL, response);
 
 		return response.readEntity(Assembly.class);
@@ -167,22 +165,20 @@ public abstract class ResourceITBase {
 		WebTarget target = client.target(BOM_URL);
 		Bom bom = new Bom(lineNo, 10, "engChange", 1, "opsDesc", component, assembly, 0);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(bom));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(bom));
 		assertResponse201(BOM_URL, response);
 
 		BomPK bomPK = response.readEntity(BomPK.class);
 		target = client.target(BOM_URL).path(Integer.valueOf(bomPK.getLineNo()) + "/"
 				+ Integer.valueOf(bomPK.getComponentId()) + "/" + Integer.valueOf(bomPK.getAssemblyId()));
-//		response = asAdmin(target.request()).get();
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(BOM_URL, response);
 		bom = response.readEntity(Bom.class);
 		
 		//connect BOM
 		target = client.target(BOM_URL+"/addToComponent/");
-//		builder = asAdmin(target.request(MediaType.APPLICATION_JSON));
 		builder = target.request(MediaType.APPLICATION_JSON);
-		response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(bomPK));
+		response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(bomPK));
 		assertResponse200(BOM_URL, response);
 		return bom;
 	}
@@ -191,14 +187,13 @@ public abstract class ResourceITBase {
 		WebTarget target = client.target(INVENTORY_URL);
 		Inventory inventory = new Inventory(1, constantDate(), 1, 0, 10, component);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
-		Response response = builder.accept(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(inventory));
+		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(inventory));
 		assertResponse201(INVENTORY_URL, response);
 
 		InventoryPK inventoryPK = response.readEntity(InventoryPK.class);
 		target = client.target(INVENTORY_URL)
 				.path(inventoryPK.getComponentId()+"/"+inventoryPK.getLocation().toString());
-//		response = asAdmin(target.request()).get();
-		response = target.request().get();
+		response = asTestUser(target.request()).get();
 		assertResponse200(INVENTORY_URL, response);
 
 		return response.readEntity(Inventory.class);

@@ -3,6 +3,7 @@ package de.novatec.showcase.manufacture.controller;
 import java.util.Collection;
 
 import javax.annotation.ManagedBean;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
@@ -24,6 +26,7 @@ import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
 @Path(value = "/workorder")
+@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.WORKORDER_READ_ROLE_NAME})
 public class WorkOrderController {
 
 	@EJB
@@ -69,7 +72,7 @@ public class WorkOrderController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response scheduleWorkOrder(WorkOrder workOrder, @Context UriInfo uriInfo) {
 		// TODO validate workOrder (there are some fields which has to be set for an initial workorder - have a look in the constructors or workorder.json)
 		Integer id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
@@ -81,7 +84,7 @@ public class WorkOrderController {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "{id}")
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response cancelWorOrder(@PathParam("id") Integer workorderId, @Context UriInfo uriInfo) {
 		bean.cancelWorkOrder(workorderId);
 		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workorderId));
@@ -91,7 +94,7 @@ public class WorkOrderController {
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "{workOrderId}/{manufacturedQuantity}")
 	public Response completeWorkOrder(
 			@PathParam("workOrderId")Integer workOrderId, 
@@ -106,7 +109,7 @@ public class WorkOrderController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path(value = "advance_status/{id}")
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response advanceStatus(@PathParam("id") Integer workorderId, @Context UriInfo uriInfo) {
 		bean.advanceWorkOrderStatus(workorderId);
 		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workorderId));

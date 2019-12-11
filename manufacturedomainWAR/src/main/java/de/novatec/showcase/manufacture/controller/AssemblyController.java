@@ -3,6 +3,7 @@ package de.novatec.showcase.manufacture.controller;
 import java.util.Collection;
 
 import javax.annotation.ManagedBean;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Assembly;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
@@ -62,7 +64,7 @@ public class AssemblyController extends BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-//	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response createAssembly(Assembly assembly, @Context UriInfo uriInfo) {
 		// TODO validate assembly
 		String id = bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly));
