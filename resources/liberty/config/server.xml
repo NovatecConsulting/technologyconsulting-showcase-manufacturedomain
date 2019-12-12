@@ -1,4 +1,4 @@
-<server description="order domain server">
+<server description="manufacture domain server">
 	<featureManager>
 		<feature>javaee-8.0</feature>
 	</featureManager>
