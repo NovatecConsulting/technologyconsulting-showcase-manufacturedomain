@@ -19,11 +19,14 @@ import javax.persistence.Version;
 
 @Table(name = "M_INVENTORY")
 @Entity
-@NamedQuery(name = "inventoryQueryAll", query = Inventory.QUERY_ALL)
+@NamedQuery(name = Inventory.ALL_INVENTORIES, query = Inventory.ALL_INVENTORIES_QUERY)
 public class Inventory implements Serializable{
-	public static final String QUERY_ALL = "SELECT i FROM Inventory i";
-	
+
 	private static final long serialVersionUID = -5262453330017334196L;
+	
+	public static final String ALL_INVENTORIES = "ALL_INVENTORIES";
+	
+	public static final String ALL_INVENTORIES_QUERY = "SELECT i FROM Inventory i";
 	
 	@AttributeOverrides({
 		@AttributeOverride(name="componentId", column=@Column(name="IN_P_ID")),

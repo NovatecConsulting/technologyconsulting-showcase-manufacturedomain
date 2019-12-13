@@ -11,7 +11,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import de.novatec.showcase.manufacture.ejb.entity.Assembly;
 import de.novatec.showcase.manufacture.ejb.entity.Bom;
@@ -36,18 +36,16 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		return em.find(WorkOrder.class, wordOrderId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Collection<WorkOrder> getAllWorkOrders() {
-		return em.createNamedQuery("workorderQueryAll").getResultList();
+		return em.createNamedQuery(WorkOrder.ALL_WORKORDERS, WorkOrder.class).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Collection<WorkOrder> getWorkOrderByStatus(WorkOrderStatus status) {
-		Query queryWorkOrdersByStatus = em.createNamedQuery("workorderQueryByStatus");
+		TypedQuery<WorkOrder> queryWorkOrdersByStatus = em.createNamedQuery(WorkOrder.WORKORDERS_BY_STATUS, WorkOrder.class);
 		queryWorkOrdersByStatus.setParameter("status", status);
 		return queryWorkOrdersByStatus.getResultList();
 	}

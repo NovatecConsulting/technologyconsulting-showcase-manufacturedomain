@@ -27,11 +27,15 @@ import javax.persistence.Version;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "P_TYPE", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue(value = "0")
-@NamedQuery(name = "componentQueryAll", query = Component.QUERY_ALL)
+@NamedQuery(name = Component.ALL_COMPONENTS, query = Component.ALL_COMPONENTS_QUERY)
 public class Component implements Serializable {
-	public static final String QUERY_ALL = "SELECT c FROM Component c";
-
+	
 	private static final long serialVersionUID = 2816997595652914797L;
+	
+	public static final String ALL_COMPONENTS = "ALL_COMPONENTS";
+	
+	public static final String ALL_COMPONENTS_QUERY = "SELECT c FROM Component c";
+
 
 	@Id
 	@Column(name = "P_ID")

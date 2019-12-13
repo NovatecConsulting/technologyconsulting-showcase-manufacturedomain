@@ -17,11 +17,15 @@ import javax.persistence.Version;
 
 @Table(name = "M_BOM")
 @Entity
-@NamedQuery(name = "bomQueryAll", query = Bom.QUERY_ALL)
+@NamedQuery(name = Bom.ALL_BOMS, query = Bom.ALL_BOMS_QUERY)
 public class Bom implements Serializable{
-	public static final String QUERY_ALL = "Select b From Bom b";
 	
 	private static final long serialVersionUID = 4984661995893952144L;
+
+	public static final String  ALL_BOMS = "ALL_BOMS";
+	
+	public static final String ALL_BOMS_QUERY = "Select b From Bom b";
+	
 	
 	@AttributeOverrides({
 		@AttributeOverride(name="lineNo", column=@Column(name="B_LINE_NO")),

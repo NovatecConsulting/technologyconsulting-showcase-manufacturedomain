@@ -19,15 +19,25 @@ import javax.persistence.Version;
 
 @Table(name = "M_WORKORDER")
 @Entity
-@NamedQueries(value = { @NamedQuery(name = "workorderQueryAll", query = WorkOrder.QUERY_ALL),
-		@NamedQuery(name = "workorderQueryByStatus", query = WorkOrder.QUERY_BY_STATUS),
-		@NamedQuery(name = "workorderQueryByOidOlid", query = WorkOrder.QUERY_BY_OID_OLID) })
+@NamedQueries(value = { @NamedQuery(name = WorkOrder.ALL_WORKORDERS, query = WorkOrder.ALL_WORKORDERS_QUERY_),
+		@NamedQuery(name = WorkOrder.WORKORDERS_BY_STATUS, query = WorkOrder.WORKORDERS_BY_STATUS_QUERY),
+		@NamedQuery(name = WorkOrder.WORKORDERS_BY_ORDER_ID_ORDERLINE_ID, query = WorkOrder.WORKORDERS_BY_ORDER_ID_ORDERLINE_ID_QUERY) })
 public class WorkOrder implements Serializable {
-	public static final String QUERY_ALL = "SELECT w FROM WorkOrder w";
-	public static final String QUERY_BY_STATUS = "SELECT w FROM WorkOrder w WHERE w.status = :status";
-	public static final String QUERY_BY_OID_OLID = "SELECT w FROM WorkOrder w WHERE w.salesId = :oid AND w.orderLineId = :olid";
 
 	private static final long serialVersionUID = 6815526442903454957L;
+	
+	public static final String ALL_WORKORDERS = "ALL_WORKORDERS";
+	
+	public static final String WORKORDERS_BY_STATUS = "WORKORDERS_BY_STATUS";
+	
+	public static final String WORKORDERS_BY_ORDER_ID_ORDERLINE_ID = "WORKORDERS_BY_ORDER_ID_ORDERLINE_ID";
+
+	public static final String ALL_WORKORDERS_QUERY_ = "SELECT w FROM WorkOrder w";
+	
+	public static final String WORKORDERS_BY_STATUS_QUERY = "SELECT w FROM WorkOrder w WHERE w.status = :status";
+	
+	public static final String WORKORDERS_BY_ORDER_ID_ORDERLINE_ID_QUERY = "SELECT w FROM WorkOrder w WHERE w.salesId = :oid AND w.orderLineId = :olid";
+
 
 	@Id
 	@Column(name = "WO_NUMBER")

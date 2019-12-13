@@ -31,10 +31,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		return em.find(Component.class, componentId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Component> getAllComponents() {
-		return em.createNamedQuery("componentQueryAll").getResultList();
+		return em.createNamedQuery(Component.ALL_COMPONENTS, Component.class).getResultList();
 	}
 
 	@Override
@@ -42,16 +41,14 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		return em.find(Assembly.class, componentId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Assembly> getAllAssemblies() {
-		return em.createNamedQuery("assemblyQueryAll").getResultList();
+		return em.createNamedQuery(Assembly.ALL_ASSEMBLIES, Assembly.class).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<String> getAllAssemblyIds() {
-		return em.createNamedQuery("assemblyQueryAllIds").getResultList();
+		return em.createNamedQuery(Assembly.ALL_ASSEMBLY_IDS, String.class).getResultList();
 	}
 
 	@Override
@@ -59,10 +56,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		return em.find(Bom.class, bomPK);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Bom> getAllBoms() {
-		return em.createNamedQuery("bomQueryAll").getResultList();
+		return em.createNamedQuery(Bom.ALL_BOMS, Bom.class).getResultList();
 	}
 
 	@Override
@@ -75,10 +71,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		return em.find(Inventory.class, new InventoryPK(componentId, location), LockModeType.PESSIMISTIC_WRITE);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Inventory> getAllInventories() {
-		return em.createNamedQuery("inventoryQueryAll").getResultList();
+		return em.createNamedQuery(Inventory.ALL_INVENTORIES, Inventory.class).getResultList();
 	}
 
 	/**
