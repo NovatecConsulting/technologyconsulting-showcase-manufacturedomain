@@ -32,7 +32,7 @@ abstract public class DtoMapper {
 		mapperFactory.classMap(BomPK.class, de.novatec.showcase.manufacture.ejb.entity.BomPK.class ).byDefault().register();
 		mapperFactory.classMap(Bom.class, de.novatec.showcase.manufacture.ejb.entity.Bom.class)
 		.customize(new CustomMapper <Bom, de.novatec.showcase.manufacture.ejb.entity.Bom >(){
-
+			// break up cyclic dependency
 			@Override
 			public void mapBtoA(de.novatec.showcase.manufacture.ejb.entity.Bom entity, Bom dto, MappingContext context) {
 				dto.setAssembly(null);

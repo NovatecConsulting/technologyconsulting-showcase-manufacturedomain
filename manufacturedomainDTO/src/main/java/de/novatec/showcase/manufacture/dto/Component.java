@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// This is done for the case of the Inventory.getComponent call which could also be an Assembly -> Jockson does not recocnize this...
+// This is done for the case of the Inventory.getComponent call which could also be an Assembly -> Jockson does not recognize this...
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Component implements Serializable {
 
