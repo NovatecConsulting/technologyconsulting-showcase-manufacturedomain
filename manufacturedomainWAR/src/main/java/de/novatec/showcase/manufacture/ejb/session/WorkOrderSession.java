@@ -54,7 +54,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	public int scheduleWorkOrder(WorkOrder workOrder) {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
-		em.flush();
 		Assembly mfgAssembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
 		// get (and remove) required parts from inventory and order new parts if needed
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
@@ -68,7 +67,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 				inventory.addQuantityInOrder(orderQuantity);
 			}
 			inventory.reduceQuantityOnHand(requiredQuantity);
-			em.flush();
 		}
 
 		// send order
@@ -121,7 +119,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 				Inventory inventory = manufactureSession.getInventory(workOrder.getAssemblyId(), workOrder.getLocation());
 				inventory.addQuantityOnHand(manufacturedQuantity);
 			}
-			em.flush();
 		}
 	}
 
@@ -138,7 +135,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 			if (workOrder.getStatus().equals(WorkOrderStatus.STAGE1)) {
 				workOrder.setStartDate(Calendar.getInstance());
 			}
-			em.flush();
 		}
 	}
 
@@ -156,7 +152,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		Inventory inventory = manufactureSession.getInventory(bom.getComponent().getId(), location);
 		if (isComponentUsed(bom, workOrderStatus)) {
 			inventory.addQuantityOnHand(quantity);
-			em.flush();
 		}
 	}
 

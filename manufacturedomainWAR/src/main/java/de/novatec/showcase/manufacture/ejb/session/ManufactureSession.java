@@ -92,7 +92,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 				inventory.reduceQuantityInOrder(componentDemand.getQuantity());
 			}
 			inventory.setAccDate(Calendar.getInstance());
-			em.flush();
 		}
 	}
 
@@ -100,7 +99,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public String createComponent(Component component) {
 		em.persist(component);
-		em.flush();
 		return component.getId();
 	}
 
@@ -108,7 +106,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public String createAssembly(Assembly assembly) {
 		em.persist(assembly);
-		em.flush();
 		return assembly.getId();
 	}
 
@@ -117,7 +114,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	public InventoryPK createInventory(Inventory inventory) {
 		if (this.findComponent(inventory.getComponentId()) != null) {
 			em.persist(inventory);
-			em.flush();
 			return inventory.getPk();
 		} else {
 			return null;
@@ -130,7 +126,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		if (this.findComponent(bom.getPk().getComponentId()) != null
 				&& this.findAssembly(bom.getPk().getAssemblyId()) != null) {
 			em.persist(bom);
-			em.flush();
 			return bom.getPk();
 		} else {
 			return null;
@@ -146,7 +141,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 		if (component != null && assembly != null && bom != null) {
 			component.addComponentBoms(Arrays.asList(bom));
 			assembly.addComponent(bom);
-			em.flush();
 		}
 		return;
 	}
