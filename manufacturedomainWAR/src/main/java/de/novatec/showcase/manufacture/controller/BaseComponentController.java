@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
@@ -24,7 +25,7 @@ import de.novatec.showcase.manufacture.dto.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
-@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME})
+@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME })
 public abstract class BaseComponentController {
 
 	@EJB
@@ -44,18 +45,19 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/bom/{lineNo}/{componentId}/{assemblyId}")
-	public Response getBom(@PathParam("lineNo") Integer lineNo, @PathParam("componentId") String componentId, @PathParam("assemblyId") String assemblyId) {
+	public Response getBom(@PathParam("lineNo") Integer lineNo, @PathParam("componentId") String componentId,
+			@PathParam("assemblyId") String assemblyId) {
 		BomPK bomPK = new BomPK();
 		bomPK.setLineNo(lineNo);
 		bomPK.setAssemblyId(assemblyId);
 		bomPK.setComponentId(componentId);
 		Bom bom = DtoMapper.mapToBomDto(bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)));
 		if (bom == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '"+bomPK+"' found!").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '" + bomPK + "' found!").build();
 		}
 		return Response.ok().entity(bom).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "inventory/{componentId}/{location}")
@@ -89,10 +91,11 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "inventory")
 	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
-		InventoryPK inventoryPK = DtoMapper.mapToInventoryPKDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
+		InventoryPK inventoryPK = DtoMapper
+				.mapToInventoryPKDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
 		if (inventoryPK == null) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + inventory.getComponentId() + "' not found!").build();
@@ -103,7 +106,7 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom")
 	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
 		BomPK bomPK = DtoMapper.mapToBomPKDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
@@ -119,21 +122,23 @@ public abstract class BaseComponentController {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom/addToComponent")
 	public Response addBomToComponent(BomPK bomPK) {
-		bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
-		return Response.ok().build();
+		if (bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)) != null) {
+			bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
+			return Response.ok().build();
+		}
+		return Response.status(Status.NOT_ACCEPTABLE).build();
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
+	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/deliver")
 	public Response deliver(ComponentDemands componentDemands) {
 		bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));
 		return Response.ok().build();
 	}
-
 }

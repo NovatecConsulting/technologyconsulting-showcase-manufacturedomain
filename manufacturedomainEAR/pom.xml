@@ -118,6 +118,7 @@
 						<default.http.port>${liberty.var.default.http.port}</default.http.port>
 						<default.https.port>${liberty.var.default.https.port}</default.https.port>
 						<app.context.root>manufacturedomain</app.context.root>
+						<isSingleEarDeployment>true</isSingleEarDeployment>
 					</bootstrapProperties>
 				</configuration>
 				<executions>

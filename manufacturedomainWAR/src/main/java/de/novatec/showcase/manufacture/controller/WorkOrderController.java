@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
+import de.novatec.showcase.manufacture.client.supplier.RestcallException;
 import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
@@ -75,9 +76,13 @@ public class WorkOrderController {
 	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	public Response scheduleWorkOrder(WorkOrder workOrder, @Context UriInfo uriInfo) {
 		// TODO validate workOrder (there are some fields which has to be set for an initial workorder - have a look in the constructors or workorder.json)
-		Integer id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
-//		JsonObjectBuilder builder = Json.createObjectBuilder();
-//		builder.add("id", id);
+		Integer id;
+		try {
+			id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
+		} catch (RestcallException e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(e.getMessage()).build();
+		}
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(id))).build();
 	}
 	

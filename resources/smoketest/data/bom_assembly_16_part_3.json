@@ -1,0 +1,36 @@
+{
+	"pk": { 
+		"assemblyId": "16",
+		"componentId": "3",
+		"lineNo": 2
+	},
+	"quantity": 4,
+	"engChange": "engChange",
+	"opsNo": 1,
+	"opsDesc": "description",
+	"component": {
+	    "id": "3",
+		"name": "Part 3",
+		"description": "description",
+		"revision": "revision",
+		"planner": 1,
+		"type": 1,
+		"purchased": 1,
+		"lomark": 1,
+		"himark": 1,
+		"version": 1	
+	},
+	"assembly": {
+	    "id": "16",
+		"name": "Assembly 16",
+		"description": "description",
+		"revision": "revision",
+		"planner": 2,
+		"type": 3,
+		"purchased": 3,
+		"lomark": 3,
+		"himark": 3,
+		"version": 1
+	},
+	"version": 1
+}

@@ -1,0 +1,12 @@
+{
+	"name": "Assembly 12",
+	"description": "Assembly 12 which is build from 2 parts",
+	"revision": "1",
+	"planner": 2,
+	"type": 3,
+	"purchased": 3,
+	"lomark": 3,
+	"himark": 3,
+	"componentBoms": [],
+	"version": 1
+}

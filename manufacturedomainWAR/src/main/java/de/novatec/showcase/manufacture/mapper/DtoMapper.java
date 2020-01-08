@@ -69,6 +69,11 @@ abstract public class DtoMapper {
 		return mapper.mapAsList(workorders, WorkOrder.class);
 	}
 
+	public static List<ComponentDemand> mapToComponentDemandDto(
+			List<de.novatec.showcase.manufacture.ejb.entity.ComponentDemand> componentDemands) {
+		return mapper.mapAsList(componentDemands, ComponentDemand.class);
+	}
+
 	public static Component mapToComponentDto(de.novatec.showcase.manufacture.ejb.entity.Component component) {
 		return mapper.map(component, Component.class);
 	}

@@ -19,7 +19,7 @@ public class BomPK implements Serializable {
 		super();
 	}
 
-	public BomPK(int lineNo, String assemblyId, String componentId) {
+	public BomPK(String assemblyId, String componentId, int lineNo) {
 		super();
 		this.lineNo = lineNo;
 		this.assemblyId = assemblyId;

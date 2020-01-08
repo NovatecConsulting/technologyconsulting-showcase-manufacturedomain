@@ -13,6 +13,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.novatec.showcase.manufacture.GlobalConstants;
+import de.novatec.showcase.manufacture.client.supplier.ComponentDemandPurchaser;
+import de.novatec.showcase.manufacture.client.supplier.RestcallException;
+import de.novatec.showcase.manufacture.dto.PurchaseOrder;
 import de.novatec.showcase.manufacture.ejb.entity.Assembly;
 import de.novatec.showcase.manufacture.ejb.entity.Bom;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
@@ -24,11 +31,15 @@ import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class WorkOrderSession implements WorkOrderSessionLocal {
 
+	private static Logger log = LoggerFactory.getLogger(WorkOrderSession.class);
+
 	@PersistenceContext
-	EntityManager em;
+	private EntityManager em;
 
 	@EJB
-	ManufactureSessionLocal manufactureSession;
+	private ManufactureSessionLocal manufactureSession;
+	
+	private ComponentDemandPurchaser componentDemandPurchaser = new ComponentDemandPurchaser();
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -51,7 +62,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	@Override
-	public int scheduleWorkOrder(WorkOrder workOrder) {
+	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
 		Assembly mfgAssembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
@@ -71,8 +82,17 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 		// send order
 		if (componentDemands.size() > 0) {
-			// TODO add Restcall
-//			jmsSender.sendRequestionToBuyer(order);
+			if(!GlobalConstants.IS_SINGLE_EAR_DEPLOYMENT)
+			{
+				Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
+				for (PurchaseOrder purchaseOrder : purchaseOrders) {
+					log.info("purchased: " + purchaseOrder);
+				}
+			}
+			else
+			{
+				log.info("ManufacturdomainEAR is deployed as a single EAR -> calls to supplierdomain.purchase are ignored!");
+			}
 		}
 		return workOrder.getId();
 	}
