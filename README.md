@@ -6,7 +6,7 @@ manufacturedomain is a part of a showcase implementation which is running on a o
     - **manufacturedomainWAR** - contains the rest controllers and all EJB classes and entities
     - **manufacturedomainEAR** - contains the war module
 
-#### The project consists of the following packages
+## The project consists of the following packages
 
 - **de.novatec.showcase.manufacture.ejb.entity** - with all related order domain entities
 - **de.novatec.showcase.manufacture.ejb.session** - with the order domain EJB session beans
@@ -14,7 +14,7 @@ manufacturedomain is a part of a showcase implementation which is running on a o
 - **de.novatec.showcase.manufacture.mapper** - with orika mapper fro dto/entity mapping
 
 
-#### build, run and stop manufacturedomain on an open liberty server
+## build, run and stop manufacturedomain on an open liberty server
 - **build:** mvn clean install
 - **run:** mvn liberty:run
 - **stop:** mvn liberty:stop
@@ -22,18 +22,19 @@ manufacturedomain is a part of a showcase implementation which is running on a o
 
 All commands have to be executed from the manufacturedomainEAR folder. In development mode you can run the the integration tests (*IT.java classes) by pressing RETURN/ENTER when the server is up. Code changes in the IT tests are hot replaced.
 
-#### Smoketest
+## Smoketest
 There is a little script smoketest.sh in the manufacturedomainParent\resources\smoketest folder which could be used to test if the very basic functionality works after staring the open liberty server with the manufacturedomain as EAR. Be careful this smoketest.sh could be run only once!!!
 
 - create three components (parts)
-- create two assemblies
+- create 21 assemblies
 - create bill of material (bom) 
     - with three components and two assemblies
     - assembly 1 is build up from part 1,2,3 and 
     - assembly 2 is build up only from part 1 and 2
+    - assembly 3 to 21 is build up only from part 1 and 3
 - create the inventories for 
     - three components and 
-    - two assemblies
+    - 21 assemblies
 - create/schedule a workorder
 - deliver (ComponentDemand) parts
 - move workorder through the workorder states
@@ -44,8 +45,10 @@ There is a little script smoketest.sh in the manufacturedomainParent\resources\s
 - create second workorder
 - cancel the second workorder / set workorder in state **CANCELED**
 
-#### TODOs:
+## openAPI
+check [openAPI](http://localhost:9080/api/explorer/) if the server is running for the  API of the domain
 
-- replace formerly existing MDB/JMS code with REST clients to other domains (order, supplier)
+## TODOs:
+
 - Better REST Responses including status codes
 - some validations to avoid NPE's

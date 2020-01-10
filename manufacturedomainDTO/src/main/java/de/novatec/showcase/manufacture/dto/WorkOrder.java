@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
+@Schema(name="WorkOrder", description="POJO that represents a WorkOrder.")
 public class WorkOrder implements Serializable {
 
 	private static final long serialVersionUID = 1L;

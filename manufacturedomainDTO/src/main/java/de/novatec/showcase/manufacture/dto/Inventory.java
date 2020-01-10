@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
+@Schema(name="Inventory", description="POJO that represents a Inventory.")
 public class Inventory implements Serializable {
 	private static final long serialVersionUID = 1L;
 

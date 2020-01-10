@@ -3,6 +3,9 @@ package de.novatec.showcase.manufacture.dto;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+@Schema(name="Assembly", description="POJO that represents a Assembly.")
 public class Assembly extends Component {
 
 	private static final long serialVersionUID = 1L;

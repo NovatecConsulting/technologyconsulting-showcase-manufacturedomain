@@ -16,7 +16,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+
 import de.novatec.showcase.manufacture.GlobalConstants;
+import de.novatec.showcase.manufacture.dto.Assembly;
 import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
@@ -34,10 +44,24 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/bom")
+	@APIResponses(
+	        value = {
+	            @APIResponse(
+	                responseCode = "404",
+	                description = "No Bom found",
+	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	                responseCode = "200",
+	                description = "The Boms which are availabale.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Assembly.class))) })
+    @Operation(
+	    summary = "Get the Boms",
+	    description = "Get all available Boms.")
 	public Response getAllBoms() {
 		Collection<Bom> boms = DtoMapper.mapToBomDto(bean.getAllBoms());
 		if (boms == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("No Boms found!").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("No Boms found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(boms).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -45,7 +69,38 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/bom/{lineNo}/{componentId}/{assemblyId}")
-	public Response getBom(@PathParam("lineNo") Integer lineNo, @PathParam("componentId") String componentId,
+	@APIResponses(
+	        value = {
+	            @APIResponse(
+	                responseCode = "404",
+	                description = "Bom not found",
+	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	                responseCode = "200",
+	                description = "The Bom with the given component id, assembly id and lineNo.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Assembly.class))) })
+    @Operation(
+	    summary = "Get the Bom",
+	    description = "Get Bom by lineNo, componentId and assemblyId.")
+	public Response getBom(
+			@Parameter(
+		            description = "The lineNo of the Bom.",
+		            required = true,
+		            example = "1",
+		            schema = @Schema(type = SchemaType.INTEGER)) 
+			@PathParam("lineNo") Integer lineNo, 
+			@Parameter(
+		            description = "The componentId of the Bom.",
+		            required = true,
+		            example = "1",
+		            schema = @Schema(type = SchemaType.STRING)) 
+			@PathParam("componentId") String componentId,
+			@Parameter(
+		            description = "The assemblyId of the Bom.",
+		            required = true,
+		            example = "1",
+		            schema = @Schema(type = SchemaType.STRING)) 
 			@PathParam("assemblyId") String assemblyId) {
 		BomPK bomPK = new BomPK();
 		bomPK.setLineNo(lineNo);
@@ -53,7 +108,7 @@ public abstract class BaseComponentController {
 		bomPK.setComponentId(componentId);
 		Bom bom = DtoMapper.mapToBomDto(bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)));
 		if (bom == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '" + bomPK + "' found!").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '" + bomPK + "' found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(bom).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -61,18 +116,47 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "inventory/{componentId}/{location}")
-	public Response getInventory(@PathParam("componentId") String componentId,
+	@APIResponses(
+	        value = {
+	            @APIResponse(
+	                responseCode = "404",
+	                description = "Inventory not found",
+	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		 		@APIResponse(
+			 		responseCode = "500",
+			 		description = "ComponentId/location has to be greater than 0.",
+			 		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	                responseCode = "200",
+	                description = "The Inventory with the given component id and location.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Assembly.class))) })
+    @Operation(
+	    summary = "Get the Inventory",
+	    description = "Get Inventory by componentId and location.")
+	public Response getInventory(
+			@Parameter(
+		            description = "The componentId of the Inventory.",
+		            required = true,
+		            example = "1",
+		            schema = @Schema(type = SchemaType.STRING)) 
+			@PathParam("componentId") String componentId,
+			@Parameter(
+		            description = "The location of the Inventory.",
+		            required = true,
+		            example = "1",
+		            schema = @Schema(type = SchemaType.INTEGER)) 
 			@PathParam("location") Integer location) {
 		if (Integer.valueOf(componentId).intValue() <= 0) {
-			return Response.serverError().entity("Customer id cannot be less than 1!").build();
+			return Response.serverError().entity("Component id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
 		if (location.intValue() <= 0) {
-			return Response.serverError().entity("location cannot be less than 1!").build();
+			return Response.serverError().entity("location cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
 		Inventory inventory = DtoMapper.mapToInventoryDto(bean.getInventory(componentId, location));
 		if (inventory == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity("Inventory with component/assembly id '"
-					+ componentId + "' and location '" + location + "' has no inventory!").build();
+					+ componentId + "' and location '" + location + "' has no inventory!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(inventory).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -80,10 +164,24 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/inventory")
-	public Response getAllInventories() {
+	@APIResponses(
+	        value = {
+	            @APIResponse(
+	                responseCode = "404",
+	                description = "No Inventories found",
+	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	                responseCode = "200",
+	                description = "The Inventories which are availabale.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Assembly.class))) })
+    @Operation(
+    	summary = "Get all Inventories",
+    	description = "Get all available Inventories.")
+	public Response getInventories() {
 		Collection<Inventory> inventories = DtoMapper.mapToInventoryDto(bean.getAllInventories());
 		if (inventories == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("No Inventories found!").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("No Inventories found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(inventories).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -92,15 +190,37 @@ public abstract class BaseComponentController {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
-	@Path(value = "inventory")
+	@Path(value = "/inventory")
+	@APIResponses(
+	        value = {
+	 		   @APIResponse(
+	 				responseCode = "404",
+	 			    description = "The Component with the given id in the Inventory object does not exist.",
+	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	           @APIResponse(
+	                responseCode = "201",
+	                description = "The new Inventory for the given Inventory object.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Inventory.class))) })
+		@RequestBody(
+            name="inventory",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = Inventory.class)),
+            required = true,
+            description = "example of a Inventory"
+        )
+    @Operation(
+        summary = "Create a new Inventory",
+        description = "Create a new Inventory by the given Inventory object.")
 	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
 		InventoryPK inventoryPK = DtoMapper
 				.mapToInventoryPKDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
 		if (inventoryPK == null) {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Component with id '" + inventory.getComponentId() + "' not found!").build();
+					.entity("Component with id '" + inventory.getComponentId() + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(inventoryPK).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(inventoryPK).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST
@@ -108,22 +228,65 @@ public abstract class BaseComponentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom")
+	@APIResponses(
+	        value = {
+	 		   @APIResponse(
+	 				responseCode = "404",
+	 			    description = "The Component/Assembly with the given id in the Bom object does not exist.",
+	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	           @APIResponse(
+	                responseCode = "201",
+	                description = "The new Bom for the given inventory object.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = Bom.class))) })
+		@RequestBody(
+            name="bom",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = Bom.class)),
+            required = true,
+            description = "example of a Bom"
+        )
+    @Operation(
+        summary = "Create a new Bom",
+        description = "Create a new Bom by the given Bom object.")
 	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
 		BomPK bomPK = DtoMapper.mapToBomPKDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
 		if (bomPK == null) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + bom.getPk().getComponentId() + "' or " + "Assembly with id '"
 							+ bom.getPk().getAssemblyId() + "' not found!")
-					.build();
+					.type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bomPK).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bomPK).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom/addToComponent")
+	@APIResponses(
+	        value = {
+	 		   @APIResponse(
+	 				responseCode = "406",
+	 			    description = "No such Bom with the given BomPK was found.",
+	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	           @APIResponse(
+	                responseCode = "200",
+	                description = "The Bom was added to the Component.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = BomPK.class))) })
+		@RequestBody(
+            name="bom",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = BomPK.class)),
+            required = true,
+            description = "example of a BomPk"
+        )
+    @Operation(
+        summary = "Add Bom to Component",
+        description = "Add the Bom to Comonent by the given BomPK.")
 	public Response addBomToComponent(BomPK bomPK) {
 		if (bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)) != null) {
 			bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
@@ -133,10 +296,27 @@ public abstract class BaseComponentController {
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/deliver")
+	@APIResponses(
+	        value = {
+	           @APIResponse(
+	                responseCode = "200",
+	                description = "The ComponentDemands are dilvered.",
+	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	                schema = @Schema(implementation = BomPK.class))) })
+		@RequestBody(
+            name="componantDemands",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = @Schema(implementation = ComponentDemands.class)),
+            required = true,
+            description = "example of a ComponentDemands"
+        )
+    @Operation(
+        summary = "Deliver ComponentDemands",
+        description = "Deliver the ComponentDemands.")
 	public Response deliver(ComponentDemands componentDemands) {
 		bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));
 		return Response.ok().build();

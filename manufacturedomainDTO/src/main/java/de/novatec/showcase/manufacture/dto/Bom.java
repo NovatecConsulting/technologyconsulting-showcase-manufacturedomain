@@ -3,8 +3,11 @@ package de.novatec.showcase.manufacture.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Schema(name="Bom", description="POJO that represents a Bom.")
 public class Bom implements Serializable {
 
 	private static final long serialVersionUID = 1L;

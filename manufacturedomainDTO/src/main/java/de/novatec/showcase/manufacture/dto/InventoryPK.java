@@ -3,28 +3,21 @@ package de.novatec.showcase.manufacture.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+@Schema(name="InventoryPK", description="POJO that represents a InventoryPK.")
 public class InventoryPK implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
+	@Schema(required=true)
 	private String componentId;
+	@Schema(required=true)
 	private Integer location;
 	
 	public InventoryPK(){
 		
 	}
-
-//	public InventoryPK(String componentId, Integer location) {
-//		super();
-//		this.componentId = componentId;
-//		this.location = location;
-//	}
-	
-//	public InventoryPK(InventoryPK pk){
-//		super();
-//		this.componentId = pk.componentId;
-//		this.location = pk.location;
-//	}
 
 	public String getComponentId() {
 		return componentId;

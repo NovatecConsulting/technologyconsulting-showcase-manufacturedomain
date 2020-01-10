@@ -3,10 +3,16 @@ package de.novatec.showcase.manufacture.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+@Schema(name="ComponentDemand", description="POJO that represents a ComponentDemand.")
 public class ComponentDemand implements Serializable {
 	private static final long serialVersionUID = 1L;
+	@Schema(required=true)
 	private String componentId;
+	@Schema(required=true)
 	private int quantity;
+	@Schema(required=true)
 	private int location;
 
 	public ComponentDemand() {
