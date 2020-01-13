@@ -1,0 +1,21 @@
+[ 
+	{
+	  "httpRequest" : {
+	    "method" : "POST",
+	    "path" : "/supplierdomain/supplier/purchase/"
+	  },
+	  "times" : {
+	    "unlimited" : true
+	  },
+	  "timeToLive" : {
+	    "unlimited" : true
+	  },
+	  "httpResponse" : {
+	    "statusCode" : 201,
+	    "body" : {
+	      "type" : "STRING",
+	      "string" : "[{\"poNumber\":2,\"sentDate\":null,\"siteId\":26,\"startDate\":\"2018-12-03\",\"supplierId\":2,\"version\":0,\"purchaseOrderlines\":[{\"pk\":{\"polNumber\":2,\"poNumber\":2},\"outstandingBalance\":3015.17,\"requestedDeliveryDate\":\"2008-12-08\",\"leadtime\":55,\"deliveryLocation\":1,\"optionalComment\":\"COMMENT_ZCWUIOWHDWESWNWRTMKFHFZZBSYEZHCHBOREDIBUQUBYFMREDRKTNTSIIBLCCAMLUMMILPLCY\",\"partNumber\":\"1\",\"orderedQuantity\":20,\"version\":95,\"purchaseOrder\":null}]}]",
+	      "contentType" : "application/json"
+	    }
+	  }
+	} ]

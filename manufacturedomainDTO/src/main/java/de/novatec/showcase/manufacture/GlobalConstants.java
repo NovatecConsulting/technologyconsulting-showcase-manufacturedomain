@@ -5,6 +5,4 @@ public interface GlobalConstants {
 	public static final String ADMIN_ROLE_NAME = "MANUFACTUREDOMAIN.ADMIN";
 	public static final String COMPONENT_READ_ROLE_NAME = "MANUFACTUREDOMAIN.COMPONENT";
 	public static final String WORKORDER_READ_ROLE_NAME = "MANUFACTUREDOMAIN.WORKORDER";
-	public static final Boolean IS_SINGLE_EAR_DEPLOYMENT = Boolean
-			.valueOf(System.getProperty("isSingleEarDeployment", Boolean.FALSE.toString()));
 }

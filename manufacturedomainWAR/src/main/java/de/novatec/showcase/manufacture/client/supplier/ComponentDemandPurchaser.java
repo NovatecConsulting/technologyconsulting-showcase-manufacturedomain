@@ -24,7 +24,7 @@ import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 public class ComponentDemandPurchaser {
 
-	private static final String PORT = System.getProperty("http.port");
+	private static final String PORT = System.getProperty("http.port.supplier");
 	private static final String BASE_URL = "http://localhost:" + PORT + "/supplierdomain/";
 
 	private static final String SUPPLIER_URL = BASE_URL + "supplier/";

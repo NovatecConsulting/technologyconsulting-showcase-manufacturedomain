@@ -1,4 +1,10 @@
+#!/bin/bash
+
 # is runnable only once because of the id's of component and assembly which are static!
+
+java -Dmockserver.initializationJsonPath=./data/init_expectations.json -jar ./lib/mockserver-netty-5.8.1-jar-with-dependencies.jar -serverPort 9090 -logLevel ERROR &
+#wait while mockserver is staring
+sleep 1
 
 # create components
 curl -u admin:adminpwd --header "Content-Type: application/json" --request POST --data @data/component_part_1.json http://localhost:9080/manufacturedomain/component
@@ -63,3 +69,5 @@ curl -u admin:adminpwd --header "Content-Type: application/json" --request PUT -
 # cancel a workorder
 curl -u admin:adminpwd --header "Content-Type: application/json" --request POST --data @data/workorder.json http://localhost:9080/manufacturedomain/workorder
 curl -u admin:adminpwd --header "Content-Type: application/json" --request DELETE --data @data/workorder.json http://localhost:9080/manufacturedomain/workorder/2
+
+curl -X PUT "http://localhost:9090/stop" -H  "accept: */*"

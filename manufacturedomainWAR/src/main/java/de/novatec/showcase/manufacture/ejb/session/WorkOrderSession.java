@@ -16,7 +16,6 @@ import javax.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.client.supplier.ComponentDemandPurchaser;
 import de.novatec.showcase.manufacture.client.supplier.RestcallException;
 import de.novatec.showcase.manufacture.dto.PurchaseOrder;
@@ -66,11 +65,13 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
 		Assembly mfgAssembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
+		//TODO check if Assembly was found (NPE)!
 		// get (and remove) required parts from inventory and order new parts if needed
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
 		for (Bom bom : mfgAssembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
 			Inventory inventory = manufactureSession.getInventory(bom.getComponent().getId(), workOrder.getLocation());
+			//TODO check if Assembly was found (NPE)!
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
 				componentDemands
@@ -82,16 +83,9 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 		// send order
 		if (componentDemands.size() > 0) {
-			if(!GlobalConstants.IS_SINGLE_EAR_DEPLOYMENT)
-			{
-				Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
-				for (PurchaseOrder purchaseOrder : purchaseOrders) {
-					log.info("purchased: " + purchaseOrder);
-				}
-			}
-			else
-			{
-				log.info("ManufacturdomainEAR is deployed as a single EAR -> calls to supplierdomain.purchase are ignored!");
+			Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
+			for (PurchaseOrder purchaseOrder : purchaseOrders) {
+				log.info("purchased: " + purchaseOrder);
 			}
 		}
 		return workOrder.getId();

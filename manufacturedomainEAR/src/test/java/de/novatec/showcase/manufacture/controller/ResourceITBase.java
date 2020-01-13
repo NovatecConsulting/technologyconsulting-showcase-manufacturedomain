@@ -20,7 +20,13 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.junit.MockServerRule;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -30,6 +36,7 @@ import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.dto.InventoryPK;
+import io.netty.handler.codec.http.HttpMethod;
 
 public abstract class ResourceITBase {
 
@@ -45,6 +52,34 @@ public abstract class ResourceITBase {
 
 	protected static Client client;
 	
+	@Rule
+	public MockServerRule mockServerRule = new MockServerRule(this, Integer.valueOf(System.getProperty("http.port.supplier")));
+
+	protected MockServerClient mockServerClient;
+	
+	private static final String PURCHASEORDERS_JSON_RESPONSE = "[{"
+			+ "\"poNumber\":2,"
+			+ "\"sentDate\":null,"
+			+ "\"siteId\":26,"
+			+ "\"startDate\":\"2018-12-03\","
+			+ "\"supplierId\":2,"
+			+ "\"version\":0,"
+			+ "\"purchaseOrderlines\":[{"
+				+ "\"pk\":{"
+					+ "\"polNumber\":2,"
+					+ "\"poNumber\":2"
+					+ "},"
+				+ "\"outstandingBalance\":3015.17,"
+				+ "\"requestedDeliveryDate\":\"2008-12-08\","
+				+ "\"leadtime\":55,"
+				+ "\"deliveryLocation\":1,"
+				+ "\"optionalComment\":\"COMMENT_ZCWUIOWHDWESWNWRTMKFHFZZBSYEZHCHBOREDIBUQUBYFMREDRKTNTSIIBLCCAMLUMMILPLCY\","
+				+ "\"partNumber\":\"1\","
+				+ "\"orderedQuantity\":20,"
+				+ "\"version\":95,"
+				+ "\"purchaseOrder\":null}]"
+			+ "}]";
+
 	// @formatter:off
 	private static List<Component> setupComponents = Arrays.asList(
 			new Component("Part1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
@@ -85,6 +120,21 @@ public abstract class ResourceITBase {
 	@AfterClass
 	public static void teardown() {
 		client.close();
+	}
+
+	@Before
+	public void before()
+	{
+		mockServerClient.when(
+				new HttpRequest()
+	            .withMethod(HttpMethod.POST.toString())
+	            .withPath("/supplierdomain/supplier/purchase/")
+	    )
+	    .respond(
+	        new HttpResponse()
+	        	.withStatusCode(Response.Status.CREATED.getStatusCode())
+	            .withBody(PURCHASEORDERS_JSON_RESPONSE, org.mockserver.model.MediaType.APPLICATION_JSON)
+	    );
 	}
 
 	private static void setup() {
