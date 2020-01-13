@@ -24,6 +24,8 @@ import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Assembly;
@@ -44,6 +46,7 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/bom")
+	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
 	            @APIResponse(
@@ -69,6 +72,7 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/bom/{lineNo}/{componentId}/{assemblyId}")
+	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
 	            @APIResponse(
@@ -116,6 +120,7 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "inventory/{componentId}/{location}")
+	@Tags(value= {@Tag(name = "Inventory")})
 	@APIResponses(
 	        value = {
 	            @APIResponse(
@@ -164,6 +169,7 @@ public abstract class BaseComponentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(value = "/inventory")
+	@Tags(value= {@Tag(name = "Inventory")})
 	@APIResponses(
 	        value = {
 	            @APIResponse(
@@ -191,6 +197,7 @@ public abstract class BaseComponentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/inventory")
+	@Tags(value= {@Tag(name = "Inventory")})
 	@APIResponses(
 	        value = {
 	 		   @APIResponse(
@@ -228,6 +235,7 @@ public abstract class BaseComponentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom")
+	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
 	 		   @APIResponse(
@@ -265,6 +273,7 @@ public abstract class BaseComponentController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/bom/addToComponent")
+	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
 	 		   @APIResponse(
