@@ -83,10 +83,17 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 		// send order
 		if (componentDemands.size() > 0) {
-			Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
-			for (PurchaseOrder purchaseOrder : purchaseOrders) {
-				log.info("purchased: " + purchaseOrder);
+			
+			try {
+				Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
+				for (PurchaseOrder purchaseOrder : purchaseOrders) {
+					log.info("purchased: " + purchaseOrder);
+				}
+			} catch (RestcallException e) {
+				log.error(e.getMessage());
+				throw e;
 			}
+			
 		}
 		return workOrder.getId();
 	}
