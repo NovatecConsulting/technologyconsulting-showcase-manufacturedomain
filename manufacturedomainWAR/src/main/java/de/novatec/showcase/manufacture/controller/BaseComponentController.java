@@ -34,6 +34,7 @@ import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.dto.InventoryPK;
+import de.novatec.showcase.manufacture.ejb.session.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
@@ -309,12 +310,14 @@ public abstract class BaseComponentController {
 	@RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME })
 	@Path(value = "/deliver")
 	@APIResponses(
-	        value = {
-	           @APIResponse(
-	                responseCode = "200",
-	                description = "The ComponentDemands are dilvered.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = BomPK.class))) })
+	    value = {
+		 	 @APIResponse(
+			 	responseCode = "404",
+			    description = "The Inventory or Component does not exist for the delivered ComponentDemand.",
+			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	         @APIResponse(
+	            responseCode = "200",
+	            description = "The ComponentDemands are dilvered.")})
 		@RequestBody(
             name="componantDemands",
             content = @Content(
@@ -327,7 +330,13 @@ public abstract class BaseComponentController {
         summary = "Deliver ComponentDemands",
         description = "Deliver the ComponentDemands.")
 	public Response deliver(ComponentDemands componentDemands) {
-		bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));
+		try {
+			bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));
+		} catch (InventoryNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage())
+					.type(MediaType.TEXT_PLAIN).build();
+		}
 		return Response.ok().build();
 	}
 }

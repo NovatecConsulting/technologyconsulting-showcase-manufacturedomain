@@ -28,7 +28,7 @@ public interface ManufactureService {
 
 	Collection<Inventory> getAllInventories();
 
-	void deliver(List<ComponentDemand> delivery);
+	void deliver(List<ComponentDemand> delivery) throws InventoryNotFoundException;
 
 	String createComponent(Component component);
 

@@ -81,17 +81,24 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	 */
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void deliver(List<ComponentDemand> componentDemands) {
+	public void deliver(List<ComponentDemand> componentDemands) throws InventoryNotFoundException {
 		for (ComponentDemand componentDemand : componentDemands) {
 			Inventory inventory = this.getInventory(componentDemand.getComponentId(), componentDemand.getLocation());
-			inventory.addQuantityOnHand(componentDemand.getQuantity());
-			// reduce quantity in order
-			if (inventory.getQuantityInOrder() - componentDemand.getQuantity() < 0) {
-				inventory.reduceQuantityInOrder(inventory.getQuantityInOrder());
-			} else {
-				inventory.reduceQuantityInOrder(componentDemand.getQuantity());
+			if(inventory != null)
+			{
+				inventory.addQuantityOnHand(componentDemand.getQuantity());
+				// reduce quantity in order
+				if (inventory.getQuantityInOrder() - componentDemand.getQuantity() < 0) {
+					inventory.reduceQuantityInOrder(inventory.getQuantityInOrder());
+				} else {
+					inventory.reduceQuantityInOrder(componentDemand.getQuantity());
+				}
+				inventory.setAccDate(Calendar.getInstance());
 			}
-			inventory.setAccDate(Calendar.getInstance());
+			else
+			{
+				throw new InventoryNotFoundException("Inventory for Component with Id "+ componentDemand.getComponentId() + " and location " + componentDemand.getLocation() +" not found!");
+			}
 		}
 	}
 
