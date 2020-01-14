@@ -127,16 +127,11 @@
 					</assemblyArtifact>
 					<serverName>${project.artifactId}Server</serverName>
 					<stripVersion>true</stripVersion>
-					<configFile>../resources/liberty/config/server.xml</configFile>
-					<packageFile>${package.file}</packageFile>
-					<include>${packaging.type}</include>
+					<configDirectory>../resources/liberty/config</configDirectory>
 					<bootstrapProperties>
 						<default.http.port>${liberty.var.default.http.port}</default.http.port>
 						<default.https.port>${liberty.var.default.https.port}</default.https.port>
-						<app.context.root>manufacturedomain</app.context.root>
 						<http.port.supplier>${http.port.supplier}</http.port.supplier>
-						
-						<isSingleEarDeployment>true</isSingleEarDeployment>
 					</bootstrapProperties>
 				</configuration>
 				<executions>
