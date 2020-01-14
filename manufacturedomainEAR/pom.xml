@@ -23,6 +23,8 @@
 		<liberty.var.default.http.port>9080</liberty.var.default.http.port>
 		<liberty.var.default.https.port>9443</liberty.var.default.https.port>
 		<http.port.supplier>9090</http.port.supplier>
+		<username.supplier>orderer</username.supplier>
+		<password.supplier>pwd</password.supplier>
 
 	</properties>
 
@@ -132,6 +134,8 @@
 						<default.http.port>${liberty.var.default.http.port}</default.http.port>
 						<default.https.port>${liberty.var.default.https.port}</default.https.port>
 						<http.port.supplier>${http.port.supplier}</http.port.supplier>
+						<username.supplier>${username.supplier}</username.supplier>
+						<password.supplier>${password.supplier}</password.supplier>
 					</bootstrapProperties>
 				</configuration>
 				<executions>
@@ -218,6 +222,8 @@
 						<https.port>${liberty.var.default.https.port}</https.port>
 						<http.port>${liberty.var.default.http.port}</http.port>
 						<http.port.supplier>${http.port.supplier}</http.port.supplier>
+						<username.supplier>${username.supplier}</username.supplier>
+						<password.supplier>${password.supplier}</password.supplier>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>

@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.client.supplier;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +23,8 @@ import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 public class ComponentDemandPurchaser {
 
+	private static final String USERNAME = System.getProperty("username.supplier");
+	private static final String PASSWORD = System.getProperty("password.supplier");
 	private static final String PORT = System.getProperty("http.port.supplier");
 	private static final String BASE_URL = "http://localhost:" + PORT + "/supplierdomain/";
 
@@ -52,7 +53,8 @@ public class ComponentDemandPurchaser {
 	}
 
 	private static Builder asOrderer(Builder builder) {
-		return asUser(builder, "orderer", "pwd");
+		return asUser(builder, USERNAME, PASSWORD);
+//		return asUser(builder, "orderer", "pwd");
 	}
 
 	private static Builder asUser(Builder builder, String userName, String password) {
