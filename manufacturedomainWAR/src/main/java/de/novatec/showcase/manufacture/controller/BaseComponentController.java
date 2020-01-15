@@ -34,8 +34,8 @@ import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.dto.InventoryPK;
-import de.novatec.showcase.manufacture.ejb.session.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME })

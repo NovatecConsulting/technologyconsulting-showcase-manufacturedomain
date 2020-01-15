@@ -19,8 +19,10 @@ import de.novatec.showcase.manufacture.ejb.entity.Component;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.InventoryPK;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 
 @Stateless
+@TransactionAttribute(TransactionAttributeType.NEVER)
 public class ManufactureSession implements ManufactureSessionLocal {
 
 	@PersistenceContext
@@ -37,6 +39,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Assembly findAssembly(String componentId) {
 		return em.find(Assembly.class, componentId);
 	}
@@ -62,6 +65,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Inventory getInventory(String componentId, Integer location) {
 		// PESSIMISTIC_WRITE to avoid an OptimisticLockingException when the same
 		// Inventory
@@ -80,7 +84,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	 * Inserts delivered components into the Inventory.
 	 */
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void deliver(List<ComponentDemand> componentDemands) throws InventoryNotFoundException {
 		for (ComponentDemand componentDemand : componentDemands) {
 			Inventory inventory = this.getInventory(componentDemand.getComponentId(), componentDemand.getLocation());
@@ -103,21 +107,21 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String createComponent(Component component) {
 		em.persist(component);
 		return component.getId();
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public String createAssembly(Assembly assembly) {
 		em.persist(assembly);
 		return assembly.getId();
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public InventoryPK createInventory(Inventory inventory) {
 		if (this.findComponent(inventory.getComponentId()) != null) {
 			em.persist(inventory);
@@ -128,7 +132,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public BomPK createBom(Bom bom) {
 		if (this.findComponent(bom.getPk().getComponentId()) != null
 				&& this.findAssembly(bom.getPk().getAssemblyId()) != null) {
@@ -140,7 +144,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRED)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void addBomToComponent(BomPK bomPK) {
 		Component component = this.findComponent(bomPK.getComponentId());
 		Assembly assembly = this.findAssembly(bomPK.getAssemblyId());

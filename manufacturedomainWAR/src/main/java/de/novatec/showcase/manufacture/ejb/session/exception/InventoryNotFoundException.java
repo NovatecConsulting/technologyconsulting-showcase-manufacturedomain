@@ -1,4 +1,4 @@
-package de.novatec.showcase.manufacture.ejb.session;
+package de.novatec.showcase.manufacture.ejb.session.exception;
 
 public class InventoryNotFoundException extends Exception {
 

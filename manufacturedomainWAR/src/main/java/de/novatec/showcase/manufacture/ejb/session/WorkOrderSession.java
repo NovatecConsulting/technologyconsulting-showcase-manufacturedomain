@@ -27,7 +27,7 @@ import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.NEVER)
 public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	private static Logger log = LoggerFactory.getLogger(WorkOrderSession.class);
@@ -41,19 +41,16 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	private ComponentDemandPurchaser componentDemandPurchaser = new ComponentDemandPurchaser();
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public WorkOrder findWorkOrder(Integer wordOrderId) {
 		return em.find(WorkOrder.class, wordOrderId);
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Collection<WorkOrder> getAllWorkOrders() {
 		return em.createNamedQuery(WorkOrder.ALL_WORKORDERS, WorkOrder.class).getResultList();
 	}
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Collection<WorkOrder> getWorkOrderByStatus(WorkOrderStatus status) {
 		TypedQuery<WorkOrder> queryWorkOrdersByStatus = em.createNamedQuery(WorkOrder.WORKORDERS_BY_STATUS, WorkOrder.class);
 		queryWorkOrdersByStatus.setParameter("status", status);
@@ -61,6 +58,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
@@ -118,6 +116,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void cancelWorkOrder(Integer workOrderId) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCancelable(workOrder)) {
@@ -131,6 +130,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void completeWorkOrder(Integer workOrderId, int manufacturedQuantity) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCompletable(workOrder)) {
@@ -144,6 +144,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void advanceWorkOrderStatus(Integer workOrderId) {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 
