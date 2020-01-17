@@ -36,17 +36,16 @@ public class Component implements Serializable {
 	
 	public static final String ALL_COMPONENTS_QUERY = "SELECT c FROM Component c";
 
-
 	@Id
-	@Column(name = "P_ID")
+	@Column(name = "P_ID", length = 20, nullable = false)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "C_ID_GEN")
 	@TableGenerator(name = "C_ID_GEN", table = "U_SEQUENCES", pkColumnName = "S_ID", valueColumnName = "S_NEXTNUM", pkColumnValue = "C_SEQ", allocationSize = 1)
 	private String id;
-	@Column(name = "P_NAME")
+	@Column(name = "P_NAME", length = 35)
 	private String name;
-	@Column(name = "P_DESC")
+	@Column(name = "P_DESC", length = 100)
 	private String description;
-	@Column(name = "P_REV")
+	@Column(name = "P_REV", length = 6)
 	private String revision;
 	@Column(name = "P_PLANNER")
 	private Integer planner;
@@ -65,16 +64,15 @@ public class Component implements Serializable {
 
 	@Version
 	@Column(name = "P_VERSION")
-	private int version;
+	private Integer version;
 
 	public Component() {
 		super();
 	}
 
-	public Component(String id, String name, String description, String revision, Integer planner, Integer type,
-			Integer purchased, Integer lomark, Integer himark) {
+	public Component(String name, String description, String revision, Integer planner, Integer type, Integer purchased,
+			Integer lomark, Integer himark) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.revision = revision;
@@ -83,7 +81,6 @@ public class Component implements Serializable {
 		this.purchased = purchased;
 		this.lomark = lomark;
 		this.himark = himark;
-		this.version = 0;
 		this.componentBoms = new ArrayList<Bom>();
 	}
 
@@ -167,8 +164,12 @@ public class Component implements Serializable {
 		this.componentBoms.addAll(componentBoms);
 	}
 
-	public int getVersion() {
+	public Integer getVersion() {
 		return this.version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	@Override

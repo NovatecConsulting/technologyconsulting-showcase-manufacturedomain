@@ -1,15 +1,13 @@
 {
-	"pk": {
-		"componentId": 4,
-		"location": 1
-	},
+	"componentId": 4,
+	"location": 1,
 	"accDate": "2019-12-02",
 	"accCode": 1,
 	"quantityInOrder": 10,
 	"quantityOnHand": 10,
 	"version": 1,
 	"component": {
-	    "id": 4,
+		"id": 4,
 		"name": "Assembly 1",
 		"description": "Assembly 1 which is build from 3 parts",
 		"revision": "1",

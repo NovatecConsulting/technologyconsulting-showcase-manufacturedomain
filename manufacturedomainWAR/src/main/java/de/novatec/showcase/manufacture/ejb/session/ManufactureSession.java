@@ -67,12 +67,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	public Inventory getInventory(String componentId, Integer location) {
-		// PESSIMISTIC_WRITE to avoid an OptimisticLockingException when the same
-		// Inventory
-		// is accessed by to different SessionBeans, what is not often the case.
-		// Its a Workaround to put it in a "get" Method, but this one is only used to
-		// change Inventories.
-		return em.find(Inventory.class, new InventoryPK(componentId, location), LockModeType.PESSIMISTIC_WRITE);
+		return em.find(Inventory.class, new InventoryPK(componentId, location));
 	}
 
 	@Override
@@ -122,10 +117,10 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public InventoryPK createInventory(Inventory inventory) {
+	public Inventory createInventory(Inventory inventory) {
 		if (this.findComponent(inventory.getComponentId()) != null) {
 			em.persist(inventory);
-			return inventory.getPk();
+			return inventory;
 		} else {
 			return null;
 		}
@@ -133,11 +128,11 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public BomPK createBom(Bom bom) {
-		if (this.findComponent(bom.getPk().getComponentId()) != null
-				&& this.findAssembly(bom.getPk().getAssemblyId()) != null) {
+	public Bom createBom(Bom bom) {
+		if (this.findComponent(bom.getComponentId()) != null
+				&& this.findAssembly(bom.getAssemblyId()) != null) {
 			em.persist(bom);
-			return bom.getPk();
+			return bom;
 		} else {
 			return null;
 		}

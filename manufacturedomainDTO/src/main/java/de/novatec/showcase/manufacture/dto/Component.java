@@ -28,7 +28,7 @@ public class Component implements Serializable {
 
 	private Collection<Bom> componentBoms;
 
-	private int version;
+	private Integer version;
 
 	public Component() {
 		super();
@@ -45,7 +45,6 @@ public class Component implements Serializable {
 		this.purchased = purchased;
 		this.lomark = lomark;
 		this.himark = himark;
-		this.version = 0;
 		this.componentBoms = new ArrayList<Bom>();
 	}
 
@@ -133,11 +132,11 @@ public class Component implements Serializable {
 		this.componentBoms = componentBoms;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
-	public int getVersion() {
+	public Integer getVersion() {
 		return this.version;
 	}
 

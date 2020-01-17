@@ -5,53 +5,62 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Schema(name="Bom", description="POJO that represents a Bom.")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Bom implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private BomPK pk;
+	private String componentId;
+	private String assemblyId;
+	private int lineNo;
 	private int quantity;
 	private String engChange;
 	private int opsNo;
 	private String opsDesc;
-	private Component component;
-	private Assembly assembly;
-	private int version;
+	
+	private Integer version;
 
 	public Bom() {
 		super();
 	}
 	
 	public Bom(int lineNo, int quantity, String engChange, int opsNo,
-			String opsDesc, Component component, Assembly assembly, int version) {
+			String opsDesc, Component component, Assembly assembly) {
 		super();
-		this.pk = new BomPK();
-		this.pk.setLineNo(lineNo);
-		this.pk.setAssemblyId(assembly.getId());
-		this.pk.setComponentId(component.getId());
+		this.lineNo = lineNo;
+		this.assemblyId = assembly.getId();
+		this.componentId = component.getId();
 		this.quantity = quantity;
 		this.engChange = engChange;
 		this.opsNo = opsNo;
 		this.opsDesc = opsDesc;
-		this.component = component;
-		this.assembly = assembly;
-		this.version = version;
 	}
 
-	public BomPK getPk() {
-		return pk;
-	}
-
-	public void setPk(BomPK pk) {
-		this.pk = pk;
-	}
-
-	@JsonIgnore
 	public int getLineNo() {
-		return this.pk.getLineNo();
+		return lineNo;
+	}
+
+	public void setLineNo(int lineNo) {
+		this.lineNo = lineNo;
+	}
+
+	public String getAssemblyId() {
+		return assemblyId;
+	}
+
+	public String getComponentId() {
+		return componentId;
+	}
+
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
+	}
+
+	public void setAssemblyId(String assemblyId) {
+		this.assemblyId = assemblyId;
 	}
 
 	public int getQuantity() {
@@ -86,33 +95,17 @@ public class Bom implements Serializable {
 		this.opsDesc = opsDesc;
 	}
 
-	public Component getComponent() {
-		return component;
-	}
-
-	public void setComponent(Component component) {
-		this.component = component;
-	}
-
-	public Assembly getAssembly() {
-		return assembly;
-	}
-
-	public void setAssembly(Assembly assembly) {
-		this.assembly = assembly;
-	}
-
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(assembly, component, engChange, opsDesc, opsNo, pk, quantity, version);
+		return Objects.hash(assemblyId, componentId, engChange, lineNo, opsDesc, opsNo, quantity, version);
 	}
 
 	@Override
@@ -124,16 +117,16 @@ public class Bom implements Serializable {
 			return false;
 		}
 		Bom other = (Bom) obj;
-		return Objects.equals(assembly, other.assembly) && Objects.equals(component, other.component)
-				&& Objects.equals(engChange, other.engChange) && Objects.equals(opsDesc, other.opsDesc)
-				&& opsNo == other.opsNo && Objects.equals(pk, other.pk) && quantity == other.quantity
+		return Objects.equals(assemblyId, other.assemblyId) && Objects.equals(componentId, other.componentId)
+				&& Objects.equals(engChange, other.engChange) && lineNo == other.lineNo
+				&& Objects.equals(opsDesc, other.opsDesc) && opsNo == other.opsNo && quantity == other.quantity
 				&& version == other.version;
 	}
 
 	@Override
 	public String toString() {
-		return "Bom [pk=" + pk + ", quantity=" + quantity + ", engChange=" + engChange + ", opsNo=" + opsNo
-				+ ", opsDesc=" + opsDesc + ", component=" + component + ", assembly=" + assembly + ", version="
+		return "Bom [componentId=" + componentId + ", assemblyId=" + assemblyId + ", lineNo=" + lineNo + ", quantity="
+				+ quantity + ", engChange=" + engChange + ", opsNo=" + opsNo + ", opsDesc=" + opsDesc + ", version="
 				+ version + "]";
 	}
 }

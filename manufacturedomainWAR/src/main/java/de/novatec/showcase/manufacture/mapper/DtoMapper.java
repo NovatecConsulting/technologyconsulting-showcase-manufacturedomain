@@ -9,13 +9,10 @@ import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.dto.ComponentDemand;
 import de.novatec.showcase.manufacture.dto.Inventory;
-import de.novatec.showcase.manufacture.dto.InventoryPK;
 import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.dto.WorkOrderStatus;
-import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 abstract public class DtoMapper {
@@ -27,19 +24,9 @@ abstract public class DtoMapper {
 		mapperFactory.classMap(Component.class, de.novatec.showcase.manufacture.ejb.entity.Component.class ).byDefault().register();
 		mapperFactory.classMap(Assembly.class, de.novatec.showcase.manufacture.ejb.entity.Assembly.class ).
 		use(Component.class, de.novatec.showcase.manufacture.ejb.entity.Component.class).byDefault().register();
-		mapperFactory.classMap(InventoryPK.class, de.novatec.showcase.manufacture.ejb.entity.InventoryPK.class ).byDefault().register();
 		mapperFactory.classMap(Inventory.class, de.novatec.showcase.manufacture.ejb.entity.Inventory.class).byDefault().register();
 		mapperFactory.classMap(BomPK.class, de.novatec.showcase.manufacture.ejb.entity.BomPK.class ).byDefault().register();
-		mapperFactory.classMap(Bom.class, de.novatec.showcase.manufacture.ejb.entity.Bom.class)
-		.customize(new CustomMapper <Bom, de.novatec.showcase.manufacture.ejb.entity.Bom >(){
-			// break up cyclic dependency
-			@Override
-			public void mapBtoA(de.novatec.showcase.manufacture.ejb.entity.Bom entity, Bom dto, MappingContext context) {
-				dto.setAssembly(null);
-				dto.setComponent(null);
-				super.mapBtoA(entity, dto, context);
-			}
-		}).byDefault().register();
+		mapperFactory.classMap(Bom.class, de.novatec.showcase.manufacture.ejb.entity.Bom.class).byDefault().register();
 		mapperFactory.classMap(WorkOrder.class, de.novatec.showcase.manufacture.ejb.entity.WorkOrder.class).byDefault().register();
 		mapperFactory.classMap(WorkOrderStatus.class, de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus.class).byDefault().register();
 		mapper = mapperFactory.getMapperFacade();
@@ -84,10 +71,6 @@ abstract public class DtoMapper {
 
 	public static Inventory mapToInventoryDto(de.novatec.showcase.manufacture.ejb.entity.Inventory inventoryPK) {
 		return mapper.map(inventoryPK, Inventory.class);
-	}
-
-	public static InventoryPK mapToInventoryPKDto(de.novatec.showcase.manufacture.ejb.entity.InventoryPK inventoryPK) {
-		return mapper.map(inventoryPK, InventoryPK.class);
 	}
 	
 	public static BomPK mapToBomPKDto(de.novatec.showcase.manufacture.ejb.entity.BomPK bomPK) {

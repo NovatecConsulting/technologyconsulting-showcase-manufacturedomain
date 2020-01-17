@@ -79,7 +79,7 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		Assembly assembly = dbAssemblies.get("Assembly2");
 		Collection<Bom> boms = assembly.getAssemblyBoms();
 		for (Bom bom : boms) {
-			target = client.target(INVENTORY_URL + bom.getPk().getComponentId() + "/1");
+			target = client.target(INVENTORY_URL + bom.getComponentId() + "/1");
 			response = asTestUser(target.request(MediaType.APPLICATION_JSON_TYPE)).get();
 			assertResponse200(INVENTORY_URL, response);
 			Inventory inventory = response.readEntity(Inventory.class);
@@ -98,7 +98,7 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		Assembly assembly = dbAssemblies.get("Assembly3");
 		Collection<Bom> boms = assembly.getAssemblyBoms();
 		for (Bom bom : boms) {
-			target = client.target(INVENTORY_URL + bom.getPk().getComponentId() + "/1");
+			target = client.target(INVENTORY_URL + bom.getComponentId() + "/1");
 			response = asTestUser(target.request(MediaType.APPLICATION_JSON_TYPE)).get();
 			assertResponse200(INVENTORY_URL, response);
 			Inventory inventory = response.readEntity(Inventory.class);
@@ -270,8 +270,4 @@ public class WorkOrderResourceIT extends ResourceITBase {
 		assertResponse200(WORKORDER_URL, response);
 		assertEquals("Workorder should be in state CANCELED", WorkOrderStatus.COMPLETED, workOrder.getStatus());
 	}
-
-
-	// TODO allowed/notallowed
-
 }

@@ -33,7 +33,7 @@ import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
-import de.novatec.showcase.manufacture.dto.InventoryPK;
+//import de.novatec.showcase.manufacture.dto.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
@@ -107,10 +107,7 @@ public abstract class BaseComponentController {
 		            example = "1",
 		            schema = @Schema(type = SchemaType.STRING)) 
 			@PathParam("assemblyId") String assemblyId) {
-		BomPK bomPK = new BomPK();
-		bomPK.setLineNo(lineNo);
-		bomPK.setAssemblyId(assemblyId);
-		bomPK.setComponentId(componentId);
+		BomPK bomPK = new BomPK(componentId,assemblyId, lineNo);
 		Bom bom = DtoMapper.mapToBomDto(bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)));
 		if (bom == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '" + bomPK + "' found!").type(MediaType.TEXT_PLAIN).build();
@@ -222,13 +219,13 @@ public abstract class BaseComponentController {
         summary = "Create a new Inventory",
         description = "Create a new Inventory by the given Inventory object.")
 	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
-		InventoryPK inventoryPK = DtoMapper
-				.mapToInventoryPKDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
-		if (inventoryPK == null) {
+		Inventory createdInventory = DtoMapper
+				.mapToInventoryDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
+		if (createdInventory == null) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + inventory.getComponentId() + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(inventoryPK).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdInventory).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST
@@ -260,14 +257,14 @@ public abstract class BaseComponentController {
         summary = "Create a new Bom",
         description = "Create a new Bom by the given Bom object.")
 	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
-		BomPK bomPK = DtoMapper.mapToBomPKDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
-		if (bomPK == null) {
+		Bom createdBom = DtoMapper.mapToBomDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
+		if (createdBom == null) {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Component with id '" + bom.getPk().getComponentId() + "' or " + "Assembly with id '"
-							+ bom.getPk().getAssemblyId() + "' not found!")
+					.entity("Component with id '" + bom.getComponentId() + "' or " + "Assembly with id '"
+							+ bom.getAssemblyId() + "' not found!")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bomPK).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdBom).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST

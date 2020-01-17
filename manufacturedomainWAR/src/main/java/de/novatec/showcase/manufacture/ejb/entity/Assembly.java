@@ -36,7 +36,7 @@ public class Assembly extends Component {
 
 	public Assembly(String id, String name, String description, String revision, Integer planner, Integer type,
 			Integer purchased, Integer lomark, Integer himark) {
-		super(id, name, description, revision, planner, type, purchased, lomark, himark);
+		super(name, description, revision, planner, type, purchased, lomark, himark);
 		assemblyBoms = new ArrayList<Bom>();
 	}
 

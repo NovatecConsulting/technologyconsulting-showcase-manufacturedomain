@@ -35,7 +35,6 @@ import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.dto.Inventory;
-import de.novatec.showcase.manufacture.dto.InventoryPK;
 import io.netty.handler.codec.http.HttpMethod;
 
 public abstract class ResourceITBase {
@@ -154,7 +153,7 @@ public abstract class ResourceITBase {
 			for (String componentKey : entry.getValue()) {
 				Component component = dbComponents.get(componentKey);
 				Bom bom = createBom(lineNo, component, assembly);
-				dbBoms.put(bom.getPk(), bom);
+				dbBoms.put(new BomPK(bom.getComponentId(), bom.getAssemblyId(), bom.getLineNo()), bom);
 				lineNo++;
 			}
 		}
@@ -213,14 +212,14 @@ public abstract class ResourceITBase {
 
 	protected static Bom createBom(int lineNo, Component component, Assembly assembly) {
 		WebTarget target = client.target(BOM_URL);
-		Bom bom = new Bom(lineNo, 10, "engChange", 1, "opsDesc", component, assembly, 0);
+		Bom bom = new Bom(lineNo, 10, "engChange", 1, "opsDesc", component, assembly);
 		Builder builder = target.request(MediaType.APPLICATION_JSON);
 		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(bom));
 		assertResponse201(BOM_URL, response);
 
-		BomPK bomPK = response.readEntity(BomPK.class);
-		target = client.target(BOM_URL).path(Integer.valueOf(bomPK.getLineNo()) + "/"
-				+ Integer.valueOf(bomPK.getComponentId()) + "/" + Integer.valueOf(bomPK.getAssemblyId()));
+		bom = response.readEntity(Bom.class);
+		target = client.target(BOM_URL).path(Integer.valueOf(bom.getLineNo()) + "/"
+				+ Integer.valueOf(bom.getComponentId()) + "/" + Integer.valueOf(bom.getAssemblyId()));
 		response = asTestUser(target.request()).get();
 		assertResponse200(BOM_URL, response);
 		bom = response.readEntity(Bom.class);
@@ -228,7 +227,7 @@ public abstract class ResourceITBase {
 		//connect BOM
 		target = client.target(BOM_URL+"/addToComponent/");
 		builder = target.request(MediaType.APPLICATION_JSON);
-		response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(bomPK));
+		response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(new BomPK(bom.getComponentId(), bom.getAssemblyId(), bom.getLineNo())));
 		assertResponse200(BOM_URL, response);
 		return bom;
 	}
@@ -240,9 +239,9 @@ public abstract class ResourceITBase {
 		Response response = asAdmin(builder.accept(MediaType.APPLICATION_JSON_TYPE)).post(Entity.json(inventory));
 		assertResponse201(INVENTORY_URL, response);
 
-		InventoryPK inventoryPK = response.readEntity(InventoryPK.class);
+		inventory = response.readEntity(Inventory.class);
 		target = client.target(INVENTORY_URL)
-				.path(inventoryPK.getComponentId()+"/"+inventoryPK.getLocation().toString());
+				.path(inventory.getComponentId()+"/"+inventory.getLocation().toString());
 		response = asTestUser(target.request()).get();
 		assertResponse200(INVENTORY_URL, response);
 

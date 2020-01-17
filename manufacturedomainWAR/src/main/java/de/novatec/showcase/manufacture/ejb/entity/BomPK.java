@@ -3,9 +3,6 @@ package de.novatec.showcase.manufacture.ejb.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public class BomPK implements Serializable {
 
 	private static final long serialVersionUID = 4261754763932213045L;

@@ -1,15 +1,13 @@
 {
-	"pk": { 
-		"assemblyId": "22",
-		"componentId": "3",
-		"lineNo": 2
-	},
+	"assemblyId": "22",
+	"componentId": "3",
+	"lineNo": 2,
 	"quantity": 4,
 	"engChange": "engChange",
 	"opsNo": 1,
 	"opsDesc": "description",
 	"component": {
-	    "id": "3",
+		"id": "3",
 		"name": "Part 3",
 		"description": "description",
 		"revision": "revision",
@@ -18,10 +16,10 @@
 		"purchased": 1,
 		"lomark": 1,
 		"himark": 1,
-		"version": 1	
+		"version": 1
 	},
 	"assembly": {
-	    "id": "22",
+		"id": "22",
 		"name": "Assembly 22",
 		"description": "description",
 		"revision": "revision",

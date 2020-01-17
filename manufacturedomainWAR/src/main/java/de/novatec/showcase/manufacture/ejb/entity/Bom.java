@@ -3,11 +3,11 @@ package de.novatec.showcase.manufacture.ejb.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
@@ -17,6 +17,7 @@ import javax.persistence.Version;
 
 @Table(name = "M_BOM")
 @Entity
+@IdClass(BomPK.class)
 @NamedQuery(name = Bom.ALL_BOMS, query = Bom.ALL_BOMS_QUERY)
 public class Bom implements Serializable{
 	
@@ -26,69 +27,82 @@ public class Bom implements Serializable{
 	
 	public static final String ALL_BOMS_QUERY = "Select b From Bom b";
 	
+	@Id
+	@Column(name = "B_COMP_ID", length = 20, nullable = false)
+	private String componentId;
+
+	@Id
+	@Column(name = "B_ASSEMBLY_ID", length = 20, nullable = false)
+	private String assemblyId;
 	
-	@AttributeOverrides({
-		@AttributeOverride(name="lineNo", column=@Column(name="B_LINE_NO")),
-		@AttributeOverride(name="assemblyId", column=@Column(name="B_ASSEMBLY_ID")),
-		@AttributeOverride(name="componentId", column=@Column(name="B_COMP_ID"))
-	})
-	@EmbeddedId
-	private BomPK pk;
+	@Id
+	@Column(name = "B_LINE_NO", nullable = false)
+	private int lineNo;
 	
 	@Column(name="B_QTY")
 	private int quantity;
 	
-	@Column(name="B_ENG_CHANGE")
+	@Column(name="B_ENG_CHANGE", length = 10)
 	private String engChange;
 	
-	@Column(name="B_OPS")
+	@Column(name="B_OPS", length = 100)
 	private int opsNo;
 	
 	@Column(name="B_OPS_DESC")
 	private String opsDesc;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="B_COMP_ID",insertable=false,updatable=false)
 	private Component component;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="B_ASSEMBLY_ID",insertable=false,updatable=false)
 	private Assembly assembly;
 	
 	@Version
 	@Column(name="B_VERSION")
-	private int version;
+	private Integer version;
 
 	public Bom() {
 		super();
 	}
 
 	public Bom(int lineNo, int quantity, String engChange, int opsNo,
-			String opsDesc, Component component, Assembly assembly, int version) {
+			String opsDesc, Component component, Assembly assembly) {
 		super();
-		this.pk = new BomPK();
-		this.pk.setLineNo(lineNo);
-		this.pk.setAssemblyId(assembly.getId());
-		this.pk.setComponentId(component.getId());
+		this.lineNo =lineNo;
+		this.assemblyId = assembly.getId();
+		this.componentId = component.getId();
 		this.quantity = quantity;
 		this.engChange = engChange;
 		this.opsNo = opsNo;
 		this.opsDesc = opsDesc;
 		this.component = component;
 		this.assembly = assembly;
-		this.version = version;
 	}
 	
-	public BomPK getPk() {
-		return pk;
+	public String getComponentId() {
+		return componentId;
+	}
+
+	public String getAssemblyId() {
+		return assemblyId;
 	}
 	
-	public void setPk(BomPK pk) {
-		this.pk = pk;
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
+	}
+
+	public void setAssemblyId(String assemblyId) {
+		this.assemblyId = assemblyId;
 	}
 
 	public int getLineNo(){
-		return this.pk.getLineNo();
+		return this.lineNo;
+	}
+
+	public void setLineNo(int lineNo) {
+		this.lineNo = lineNo;
 	}
 
 	public int getQuantity() {
@@ -139,19 +153,20 @@ public class Bom implements Serializable{
 		this.assembly = assembly;
 	}
 
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 	
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(
-//				assembly, component, 
-				engChange, opsDesc, opsNo, pk, quantity, version);
+				assemblyId, 
+				componentId, engChange, lineNo, opsDesc, opsNo, quantity,
+				version);
 	}
 
 	@Override
@@ -163,19 +178,17 @@ public class Bom implements Serializable{
 			return false;
 		}
 		Bom other = (Bom) obj;
-		return 
-//				Objects.equals(assembly, other.assembly) && Objects.equals(component, other.component)
-//				&& 
-				Objects.equals(engChange, other.engChange) && Objects.equals(opsDesc, other.opsDesc)
-				&& opsNo == other.opsNo && Objects.equals(pk, other.pk) && quantity == other.quantity
+		return Objects.equals(assemblyId, other.assemblyId)
+				&& Objects.equals(componentId, other.componentId)
+				&& Objects.equals(engChange, other.engChange) && lineNo == other.lineNo
+				&& Objects.equals(opsDesc, other.opsDesc) && opsNo == other.opsNo && quantity == other.quantity
 				&& version == other.version;
 	}
 
 	@Override
 	public String toString() {
-		return "Bom [pk=" + pk + ", quantity=" + quantity + ", engChange=" + engChange + ", opsNo=" + opsNo
-				+ ", opsDesc=" + opsDesc + 
-//				", component=" + component + ", assembly=" + assembly + 
-				", version=" + version + "]";
+		return "Bom [componentId=" + componentId + ", assemblyId=" + assemblyId + ", lineNo=" + lineNo + ", quantity="
+				+ quantity + ", engChange=" + engChange + ", opsNo=" + opsNo + ", opsDesc=" + opsDesc + ", version="
+				+ version + "]";
 	}
 }

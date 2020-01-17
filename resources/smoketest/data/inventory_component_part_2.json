@@ -1,14 +1,13 @@
 {
-	"pk": { "componentId": 3,
-	        "location": 1
-	},
+	"componentId": 3,
+	"location": 1,
 	"accDate": "2019-12-02",
 	"accCode": 1,
 	"quantityInOrder": 10,
 	"quantityOnHand": 10,
 	"version": 1,
 	"component": {
-	    "id": "3",
+		"id": "3",
 		"name": "Part 3",
 		"description": "description",
 		"revision": "revision",

@@ -68,12 +68,12 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
 		for (Bom bom : mfgAssembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
-			Inventory inventory = manufactureSession.getInventory(bom.getComponent().getId(), workOrder.getLocation());
+			Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), workOrder.getLocation());
 			//TODO check if Assembly was found (NPE)!
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
 				componentDemands
-						.add(new ComponentDemand(bom.getComponent().getId(), orderQuantity, inventory.getLocation()));
+						.add(new ComponentDemand(bom.getComponentId(), orderQuantity, inventory.getLocation()));
 				inventory.addQuantityInOrder(orderQuantity);
 			}
 			inventory.reduceQuantityOnHand(requiredQuantity);
@@ -171,7 +171,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	 * they weren't used yet
 	 */
 	private void returnInventory(Bom bom, int quantity, int location, WorkOrderStatus workOrderStatus) {
-		Inventory inventory = manufactureSession.getInventory(bom.getComponent().getId(), location);
+		Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), location);
 		if (isComponentUsed(bom, workOrderStatus)) {
 			inventory.addQuantityOnHand(quantity);
 		}

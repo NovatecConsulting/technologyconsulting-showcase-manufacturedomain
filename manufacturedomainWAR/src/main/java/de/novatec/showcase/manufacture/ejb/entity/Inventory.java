@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
@@ -20,6 +20,7 @@ import javax.persistence.Version;
 @Table(name = "M_INVENTORY")
 @Entity
 @NamedQuery(name = Inventory.ALL_INVENTORIES, query = Inventory.ALL_INVENTORIES_QUERY)
+@IdClass(InventoryPK.class)
 public class Inventory implements Serializable{
 
 	private static final long serialVersionUID = -5262453330017334196L;
@@ -28,12 +29,13 @@ public class Inventory implements Serializable{
 	
 	public static final String ALL_INVENTORIES_QUERY = "SELECT i FROM Inventory i";
 	
-	@AttributeOverrides({
-		@AttributeOverride(name="componentId", column=@Column(name="IN_P_ID")),
-		@AttributeOverride(name="location", column=@Column(name="IN_LOCATION"))
-	})
-	@EmbeddedId
-	private InventoryPK pk;
+	@Id
+	@Column(name = "IN_P_ID", length = 20, nullable = false)
+	private String componentId;
+
+	@Id
+	@Column(name = "IN_LOCATION", nullable = false)
+	private Integer location;
 	
 	@Column(name="IN_ACT_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -52,7 +54,7 @@ public class Inventory implements Serializable{
 	@Column(name="IN_VERSION")
 	private int version;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="IN_P_ID",insertable=false,updatable=false)
 	private Component component;
 	
@@ -63,19 +65,25 @@ public class Inventory implements Serializable{
 	public Inventory(Integer location, Calendar accDate, int accCode,
 			int quantityInOrder, int quantityOnHand, Component component) {
 		super();
-		this.pk = new InventoryPK();
-		this.pk.setComponentId(component.getId());
-		this.pk.setLocation(location);
+		this.componentId = component.getId();
+		this.location = location;
 		this.accDate = accDate;
 		this.accCode = accCode;
 		this.quantityInOrder = quantityInOrder;
 		this.quantityOnHand = quantityOnHand;
-		this.version = 0;
 		this.component = component;
 	}
 	
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
+	}
+
+	public void setLocation(Integer location) {
+		this.location = location;
+	}
+
 	public String getComponentId(){
-		return this.pk.getComponentId();
+		return this.componentId;
 	}
 	
 	public Component getComponent(){
@@ -86,8 +94,8 @@ public class Inventory implements Serializable{
 		this.component = component;
 	}
 
-	public int getLocation(){
-		return this.pk.getLocation();
+	public Integer getLocation(){
+		return this.location;
 	}
 
 	public Calendar getAccDate() {
@@ -134,16 +142,8 @@ public class Inventory implements Serializable{
 		this.quantityOnHand -= amount;
 	}
 	
-	public int getVersion(){
+	public Integer getVersion(){
 		return this.version;
-	}
-
-	public InventoryPK getPk() {
-		return pk;
-	}
-	
-	public void setPk(InventoryPK pk) {
-		this.pk = pk;
 	}
 
 	public void setQuantityOnHand(int quantityOnHand) {
@@ -156,7 +156,7 @@ public class Inventory implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accCode, accDate, component, pk, quantityInOrder, quantityOnHand, version);
+		return Objects.hash(accCode, accDate, componentId, location, quantityInOrder, quantityOnHand, version);
 	}
 
 	@Override
@@ -169,15 +169,16 @@ public class Inventory implements Serializable{
 		}
 		Inventory other = (Inventory) obj;
 		return accCode == other.accCode && Objects.equals(accDate, other.accDate)
-				&& Objects.equals(component, other.component) && Objects.equals(pk, other.pk)
+				&& Objects.equals(componentId, other.componentId) && Objects.equals(location, other.location)
 				&& quantityInOrder == other.quantityInOrder && quantityOnHand == other.quantityOnHand
 				&& version == other.version;
 	}
 
 	@Override
 	public String toString() {
-		return "Inventory [pk=" + pk + ", accDate=" + accDate + ", accCode=" + accCode + ", quantityInOrder="
-				+ quantityInOrder + ", quantityOnHand=" + quantityOnHand + ", version=" + version + ", component="
-				+ component + "]";
+		return "Inventory [componentId=" + componentId + ", location=" + location + ", accDate=" + accDate
+				+ ", accCode=" + accCode + ", quantityInOrder=" + quantityInOrder + ", quantityOnHand=" + quantityOnHand
+				+ ", version=" + version + ", component=" + component + "]";
 	}
+
 }

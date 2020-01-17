@@ -1,15 +1,13 @@
 {
-	"pk": {
-		"componentId": 5,
-		"location": 1
-	},
+	"componentId": 5,
+	"location": 1,
 	"accDate": "2019-12-02",
 	"accCode": 1,
 	"quantityInOrder": 10,
 	"quantityOnHand": 10,
 	"version": 1,
 	"component": {
-	    "id": 5,
+		"id": 5,
 		"name": "Assembly 2",
 		"description": "Assembly 2 which is build from 1 parts",
 		"revision": "1",

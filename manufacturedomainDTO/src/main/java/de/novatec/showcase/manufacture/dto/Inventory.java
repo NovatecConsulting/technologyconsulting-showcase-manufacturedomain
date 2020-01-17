@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
@@ -15,7 +14,9 @@ import de.novatec.showcase.manufacture.GlobalConstants;
 public class Inventory implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private InventoryPK pk;
+	private String componentId;
+
+	private Integer location;
 
 	@JsonFormat(pattern = GlobalConstants.DATE_FORMAT, locale = "de_DE")
 	private Calendar accDate;
@@ -26,7 +27,7 @@ public class Inventory implements Serializable {
 
 	private int quantityOnHand;
 
-	private int version;
+	private Integer version;
 
 	private Component component;
 
@@ -37,33 +38,37 @@ public class Inventory implements Serializable {
 	public Inventory(Integer location, Calendar accDate, int accCode, int quantityInOrder, int quantityOnHand,
 			Component component) {
 		super();
-		this.pk = new InventoryPK();
-		this.pk.setComponentId(component.getId());
-		this.pk.setLocation(location);
+		this.componentId = component.getId();
+		this.location = location;
 		this.accDate = accDate;
 		this.accCode = accCode;
 		this.quantityInOrder = quantityInOrder;
 		this.quantityOnHand = quantityOnHand;
-		this.version = 0;
 		this.component = component;
 	}
 
-	@JsonIgnore
 	public String getComponentId() {
-		return this.pk.getComponentId();
+		return this.componentId;
+	}
+
+	public Integer getLocation() {
+		return this.location;
+	}
+
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
 	}
 
 	public Component getComponent() {
-		return this.component;
+		return component;
 	}
 
 	public void setComponent(Component component) {
 		this.component = component;
 	}
 
-	@JsonIgnore
-	public int getLocation() {
-		return this.pk.getLocation();
+	public void setLocation(Integer location) {
+		this.location = location;
 	}
 
 	public Calendar getAccDate() {
@@ -90,33 +95,29 @@ public class Inventory implements Serializable {
 		this.quantityInOrder = quantityInOrder;
 	}
 
-	public int getQuantityOnHand() {
-		return quantityOnHand;
-	}
-
-	public int getVersion() {
-		return this.version;
-	}
-
-	public InventoryPK getPk() {
-		return pk;
-	}
-
-	public void setPk(InventoryPK pk) {
-		this.pk = pk;
-	}
-
 	public void setQuantityOnHand(int quantityOnHand) {
 		this.quantityOnHand = quantityOnHand;
 	}
 
-	public void setVersion(int version) {
+	public int getQuantityOnHand() {
+		return quantityOnHand;
+	}
+
+	public Integer getVersion() {
+		return this.version;
+	}
+
+	public void setQuantityOnHand(Integer quantityOnHand) {
+		this.quantityOnHand = quantityOnHand;
+	}
+
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accCode, accDate, component, pk, quantityInOrder, quantityOnHand, version);
+		return Objects.hash(accCode, accDate, componentId, location, quantityInOrder, quantityOnHand, version);
 	}
 
 	@Override
@@ -129,15 +130,16 @@ public class Inventory implements Serializable {
 		}
 		Inventory other = (Inventory) obj;
 		return accCode == other.accCode && Objects.equals(accDate, other.accDate)
-				&& Objects.equals(component, other.component) && Objects.equals(pk, other.pk)
+				&& Objects.equals(componentId, other.componentId) && Objects.equals(location, other.location)
 				&& quantityInOrder == other.quantityInOrder && quantityOnHand == other.quantityOnHand
 				&& version == other.version;
 	}
 
 	@Override
 	public String toString() {
-		return "Inventory [pk=" + pk + ", accDate=" + accDate + ", accCode=" + accCode + ", quantityInOrder="
-				+ quantityInOrder + ", quantityOnHand=" + quantityOnHand + ", version=" + version + ", component="
-				+ component + "]";
+		return "Inventory [componentId=" + componentId + ", location=" + location + ", accDate=" + accDate
+				+ ", accCode=" + accCode + ", quantityInOrder=" + quantityInOrder + ", quantityOnHand=" + quantityOnHand
+				+ ", version=" + version + ", component=" + component + "]";
 	}
+
 }

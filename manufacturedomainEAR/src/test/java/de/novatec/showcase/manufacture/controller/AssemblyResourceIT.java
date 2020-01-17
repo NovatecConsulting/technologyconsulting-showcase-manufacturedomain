@@ -3,7 +3,6 @@ package de.novatec.showcase.manufacture.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -17,13 +16,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 
 import de.novatec.showcase.manufacture.dto.Assembly;
-import de.novatec.showcase.manufacture.dto.Bom;
-import de.novatec.showcase.manufacture.dto.BomPK;
-import de.novatec.showcase.manufacture.dto.Component;
-import de.novatec.showcase.manufacture.dto.ComponentDemand;
-import de.novatec.showcase.manufacture.dto.ComponentDemands;
-import de.novatec.showcase.manufacture.dto.Inventory;
-import de.novatec.showcase.manufacture.dto.InventoryPK;
 
 public class AssemblyResourceIT extends ResourceITBase {
 

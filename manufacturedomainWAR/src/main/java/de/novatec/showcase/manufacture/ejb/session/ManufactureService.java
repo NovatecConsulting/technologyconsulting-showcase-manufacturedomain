@@ -9,7 +9,6 @@ import de.novatec.showcase.manufacture.ejb.entity.BomPK;
 import de.novatec.showcase.manufacture.ejb.entity.Component;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
-import de.novatec.showcase.manufacture.ejb.entity.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 
 public interface ManufactureService {
@@ -35,9 +34,9 @@ public interface ManufactureService {
 
 	String createAssembly(Assembly assembly);
 
-	InventoryPK createInventory(Inventory inventory);
+	Inventory createInventory(Inventory inventory);
 
-	BomPK createBom(Bom bom);
+	Bom createBom(Bom bom);
 
 	Bom findBom(BomPK bomPK);
 
