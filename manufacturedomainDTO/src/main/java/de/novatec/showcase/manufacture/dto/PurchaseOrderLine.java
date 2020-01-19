@@ -9,11 +9,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
-
 public class PurchaseOrderLine implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private PurchaseOrderLinePK pk;
+	private Integer poNumber;
+
+	private Integer polNumber;
 
 	private BigDecimal outstandingBalance;
 
@@ -30,39 +31,26 @@ public class PurchaseOrderLine implements Serializable {
 
 	private int orderedQuantity;
 
-	private int version;
-
-	private PurchaseOrder purchaseOrder;
+	private Integer version;
 
 	public PurchaseOrderLine() {
 		super();
 	}
 
-	public PurchaseOrderLine(Integer polNumber, Integer poNumber, int deliveryLocation, String partNumber, int orderedQuantity,
-			BigDecimal outstandingBalance, Date requestedDeliveryDate, String optionalComment, int leadtime, int version,
-			PurchaseOrder purchaseOrder) {
-		super();
-		this.pk = new PurchaseOrderLinePK(polNumber, poNumber);
-		this.pk = new PurchaseOrderLinePK();
-		this.pk.setPolNumber(polNumber);
-		this.pk.setPoNumber(poNumber);
-		this.outstandingBalance = outstandingBalance;
-		this.requestedDeliveryDate = requestedDeliveryDate;
-		this.leadtime = leadtime;
-		this.deliveryLocation = deliveryLocation;
-		this.optionalComment = optionalComment;
-		this.partNumber = partNumber;
-		this.orderedQuantity = orderedQuantity;
-		this.version = version;
-		this.purchaseOrder = purchaseOrder;
+	public Integer getPoNumber() {
+		return poNumber;
 	}
 
-	public PurchaseOrderLinePK getPk() {
-		return this.pk;
+	public void setPoNumber(Integer poNumber) {
+		this.poNumber = poNumber;
 	}
 
-	public void setPk(PurchaseOrderLinePK pk) {
-		this.pk = pk;
+	public Integer getPolNumber() {
+		return polNumber;
+	}
+
+	public void setPolNumber(Integer polNumber) {
+		this.polNumber = polNumber;
 	}
 
 	public BigDecimal getOutstandingBalance() {
@@ -121,34 +109,26 @@ public class PurchaseOrderLine implements Serializable {
 		this.orderedQuantity = orderedQuantity;
 	}
 
-	public int getVersion() {
+	public Integer getVersion() {
 		return this.version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public PurchaseOrder getPurchaseOrder() {
-		return this.purchaseOrder;
-	}
-
-	public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
-		this.purchaseOrder = purchaseOrder;
 	}
 
 	@Override
 	public String toString() {
-		return "PurchaseOrderLine [pk=" + pk + ", outstandingBalance=" + outstandingBalance + ", requestedDeliveryDate="
-				+ requestedDeliveryDate + ", leadtime=" + leadtime + ", deliveryLocation=" + deliveryLocation
-				+ ", optionalComment=" + optionalComment + ", partNumber=" + partNumber + ", orderedQuantity="
-				+ orderedQuantity + ", version=" + version + ", purchaseOrder=" + purchaseOrder + "]";
+		return "PurchaseOrderLine [poNumber=" + poNumber + ", polNumber=" + polNumber + ", outstandingBalance="
+				+ outstandingBalance + ", requestedDeliveryDate=" + requestedDeliveryDate + ", leadtime=" + leadtime
+				+ ", deliveryLocation=" + deliveryLocation + ", optionalComment=" + optionalComment + ", partNumber="
+				+ partNumber + ", orderedQuantity=" + orderedQuantity + ", version=" + version + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(purchaseOrder, pk, outstandingBalance, requestedDeliveryDate, leadtime, deliveryLocation, optionalComment, partNumber,
-				orderedQuantity, version);
+		return Objects.hash(deliveryLocation, leadtime, optionalComment, orderedQuantity, outstandingBalance,
+				partNumber, poNumber, polNumber, requestedDeliveryDate, version);
 	}
 
 	@Override
@@ -160,11 +140,12 @@ public class PurchaseOrderLine implements Serializable {
 			return false;
 		}
 		PurchaseOrderLine other = (PurchaseOrderLine) obj;
-		return Objects.equals(purchaseOrder, other.purchaseOrder) && Objects.equals(pk, other.pk)
-				&& Objects.equals(outstandingBalance, other.outstandingBalance) && Objects.equals(requestedDeliveryDate, other.requestedDeliveryDate)
-				&& leadtime == other.leadtime && deliveryLocation == other.deliveryLocation
-				&& Objects.equals(optionalComment, other.optionalComment) && Objects.equals(partNumber, other.partNumber)
-				&& orderedQuantity == other.orderedQuantity && version == other.version;
+		return deliveryLocation == other.deliveryLocation && leadtime == other.leadtime
+				&& Objects.equals(optionalComment, other.optionalComment) && orderedQuantity == other.orderedQuantity
+				&& Objects.equals(outstandingBalance, other.outstandingBalance)
+				&& Objects.equals(partNumber, other.partNumber) && Objects.equals(poNumber, other.poNumber)
+				&& Objects.equals(polNumber, other.polNumber)
+				&& Objects.equals(requestedDeliveryDate, other.requestedDeliveryDate) && version == other.version;
 	}
 
 }

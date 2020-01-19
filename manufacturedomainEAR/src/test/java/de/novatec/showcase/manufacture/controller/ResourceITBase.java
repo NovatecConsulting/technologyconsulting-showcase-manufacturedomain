@@ -64,10 +64,8 @@ public abstract class ResourceITBase {
 			+ "\"supplierId\":2,"
 			+ "\"version\":0,"
 			+ "\"purchaseOrderlines\":[{"
-				+ "\"pk\":{"
-					+ "\"polNumber\":2,"
-					+ "\"poNumber\":2"
-					+ "},"
+				+ "\"polNumber\":2,"
+				+ "\"poNumber\":2,"
 				+ "\"outstandingBalance\":3015.17,"
 				+ "\"requestedDeliveryDate\":\"2008-12-08\","
 				+ "\"leadtime\":55,"
@@ -75,8 +73,7 @@ public abstract class ResourceITBase {
 				+ "\"optionalComment\":\"COMMENT_ZCWUIOWHDWESWNWRTMKFHFZZBSYEZHCHBOREDIBUQUBYFMREDRKTNTSIIBLCCAMLUMMILPLCY\","
 				+ "\"partNumber\":\"1\","
 				+ "\"orderedQuantity\":20,"
-				+ "\"version\":95,"
-				+ "\"purchaseOrder\":null}]"
+				+ "\"version\":95}]"
 			+ "}]";
 
 	// @formatter:off

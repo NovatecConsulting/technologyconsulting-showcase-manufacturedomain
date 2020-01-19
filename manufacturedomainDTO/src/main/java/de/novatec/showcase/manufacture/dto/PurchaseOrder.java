@@ -115,5 +115,4 @@ public class PurchaseOrder implements Serializable {
 				&& Objects.equals(startDate, other.startDate) && supplierId == other.supplierId
 				&& version == other.version;
 	}
-
 }
