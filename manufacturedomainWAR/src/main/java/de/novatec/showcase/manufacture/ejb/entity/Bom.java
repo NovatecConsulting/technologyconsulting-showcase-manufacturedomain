@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -19,9 +18,7 @@ import javax.persistence.Version;
 @Entity
 @IdClass(BomPK.class)
 @NamedQuery(name = Bom.ALL_BOMS, query = Bom.ALL_BOMS_QUERY)
-public class Bom implements Serializable{
-	
-	private static final long serialVersionUID = 4984661995893952144L;
+public class Bom {
 
 	public static final String  ALL_BOMS = "ALL_BOMS";
 	

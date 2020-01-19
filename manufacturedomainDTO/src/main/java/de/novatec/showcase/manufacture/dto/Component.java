@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.dto;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -12,9 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 // This is done for the case of the Inventory.getComponent call which could also be an Assembly -> Jockson does not recognize this...
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name="Component", description="POJO that represents a Component.")
-public class Component implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class Component {
 
 	private String id;
 	private String name;

@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.dto;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -9,9 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Schema(name="Bom", description="POJO that represents a Bom.")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Bom implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class Bom {
 
 	private String componentId;
 	private String assemblyId;

@@ -1,10 +1,8 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class ComponentDemand implements Serializable {
-	private static final long serialVersionUID = -4766101440843057015L;
+public class ComponentDemand {
 
 	private String componentId;
 	private int quantity;

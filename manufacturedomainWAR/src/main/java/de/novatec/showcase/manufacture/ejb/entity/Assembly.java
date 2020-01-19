@@ -16,8 +16,6 @@ import javax.persistence.OneToMany;
 		@NamedQuery(name = Assembly.ALL_ASSEMBLY_IDS, query = Assembly.ALL_ASSEMBLY_IDS_QUERY) })
 public class Assembly extends Component {
 
-	private static final long serialVersionUID = -185086822159684535L;
-	
 	public static final String ALL_ASSEMBLIES = "ALL_ASSEMBLIES";
 
 	public static final String ALL_ASSEMBLY_IDS = "ALL_ASSEMBLY_IDS";

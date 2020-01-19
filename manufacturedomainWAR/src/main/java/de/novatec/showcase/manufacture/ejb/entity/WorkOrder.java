@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -22,10 +21,8 @@ import javax.persistence.Version;
 @NamedQueries(value = { @NamedQuery(name = WorkOrder.ALL_WORKORDERS, query = WorkOrder.ALL_WORKORDERS_QUERY_),
 		@NamedQuery(name = WorkOrder.WORKORDERS_BY_STATUS, query = WorkOrder.WORKORDERS_BY_STATUS_QUERY),
 		@NamedQuery(name = WorkOrder.WORKORDERS_BY_ORDER_ID_ORDERLINE_ID, query = WorkOrder.WORKORDERS_BY_ORDER_ID_ORDERLINE_ID_QUERY) })
-public class WorkOrder implements Serializable {
+public class WorkOrder {
 
-	private static final long serialVersionUID = 6815526442903454957L;
-	
 	public static final String ALL_WORKORDERS = "ALL_WORKORDERS";
 	
 	public static final String WORKORDERS_BY_STATUS = "WORKORDERS_BY_STATUS";

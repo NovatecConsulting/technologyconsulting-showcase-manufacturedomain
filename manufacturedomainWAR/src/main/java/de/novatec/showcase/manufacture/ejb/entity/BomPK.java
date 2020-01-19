@@ -1,11 +1,8 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class BomPK implements Serializable {
-
-	private static final long serialVersionUID = 4261754763932213045L;
+public class BomPK {
 
 	private int lineNo = -1;
 	private String assemblyId;

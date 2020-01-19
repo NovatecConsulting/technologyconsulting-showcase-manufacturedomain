@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -21,10 +20,8 @@ import javax.persistence.Version;
 @Entity
 @NamedQuery(name = Inventory.ALL_INVENTORIES, query = Inventory.ALL_INVENTORIES_QUERY)
 @IdClass(InventoryPK.class)
-public class Inventory implements Serializable{
+public class Inventory {
 
-	private static final long serialVersionUID = -5262453330017334196L;
-	
 	public static final String ALL_INVENTORIES = "ALL_INVENTORIES";
 	
 	public static final String ALL_INVENTORIES_QUERY = "SELECT i FROM Inventory i";

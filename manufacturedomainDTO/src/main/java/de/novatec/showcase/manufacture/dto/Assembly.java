@@ -8,8 +8,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Schema(name="Assembly", description="POJO that represents a Assembly.")
 public class Assembly extends Component {
 
-	private static final long serialVersionUID = 1L;
-
 	private Collection<Bom> assemblyBoms;
 	
 	public Assembly() {

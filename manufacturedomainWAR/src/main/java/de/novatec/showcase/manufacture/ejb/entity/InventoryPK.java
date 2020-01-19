@@ -1,10 +1,8 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class InventoryPK implements Serializable {
-	private static final long serialVersionUID = 6468462520074585825L;
+public class InventoryPK {
 
 	private String componentId;
 	private Integer location;

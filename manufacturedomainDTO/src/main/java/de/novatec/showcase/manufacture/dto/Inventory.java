@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.dto;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -11,8 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import de.novatec.showcase.manufacture.GlobalConstants;
 
 @Schema(name="Inventory", description="POJO that represents a Inventory.")
-public class Inventory implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Inventory {
 
 	private String componentId;
 

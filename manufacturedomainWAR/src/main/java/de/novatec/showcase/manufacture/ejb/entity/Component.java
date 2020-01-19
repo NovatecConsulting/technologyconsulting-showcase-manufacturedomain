@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.ejb.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,9 +27,7 @@ import javax.persistence.Version;
 @DiscriminatorColumn(name = "P_TYPE", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue(value = "0")
 @NamedQuery(name = Component.ALL_COMPONENTS, query = Component.ALL_COMPONENTS_QUERY)
-public class Component implements Serializable {
-	
-	private static final long serialVersionUID = 2816997595652914797L;
+public class Component {
 	
 	public static final String ALL_COMPONENTS = "ALL_COMPONENTS";
 	

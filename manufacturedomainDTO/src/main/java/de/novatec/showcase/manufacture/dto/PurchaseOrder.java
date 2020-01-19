@@ -1,6 +1,5 @@
 package de.novatec.showcase.manufacture.dto;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -10,9 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 
-public class PurchaseOrder implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class PurchaseOrder {
 
 	private int poNumber;
 

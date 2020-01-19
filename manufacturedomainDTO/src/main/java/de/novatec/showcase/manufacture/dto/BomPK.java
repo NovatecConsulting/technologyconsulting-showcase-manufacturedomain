@@ -1,14 +1,11 @@
 package de.novatec.showcase.manufacture.dto;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(name="BomPK", description="POJO that represents a BomPK.")
-public class BomPK implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class BomPK {
 
 	@Schema(required=true)
 	private int lineNo;
