@@ -48,13 +48,12 @@ public class ComponentDemandPurchaser {
 			});
 		}
 		throw new RestcallException(
-				"Error " + Response.Status.fromStatusCode(response.getStatus()) + " while calling " + PURCHASE_URL + " with " + componentDemands);
+				"Error " + Response.Status.fromStatusCode(response.getStatus()) + " while calling " + PURCHASE_URL + " with " + componentDemands + ". " + response.readEntity(String.class));
 
 	}
 
 	private static Builder asOrderer(Builder builder) {
 		return asUser(builder, USERNAME, PASSWORD);
-//		return asUser(builder, "orderer", "pwd");
 	}
 
 	private static Builder asUser(Builder builder, String userName, String password) {

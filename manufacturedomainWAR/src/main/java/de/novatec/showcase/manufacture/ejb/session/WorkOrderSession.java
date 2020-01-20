@@ -25,6 +25,7 @@ import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -37,7 +38,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@EJB
 	private ManufactureSessionLocal manufactureSession;
-	
+
 	private ComponentDemandPurchaser componentDemandPurchaser = new ComponentDemandPurchaser();
 
 	@Override
@@ -52,28 +53,28 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	public Collection<WorkOrder> getWorkOrderByStatus(WorkOrderStatus status) {
-		TypedQuery<WorkOrder> queryWorkOrdersByStatus = em.createNamedQuery(WorkOrder.WORKORDERS_BY_STATUS, WorkOrder.class);
+		TypedQuery<WorkOrder> queryWorkOrdersByStatus = em.createNamedQuery(WorkOrder.WORKORDERS_BY_STATUS,
+				WorkOrder.class);
 		queryWorkOrdersByStatus.setParameter("status", status);
 		return queryWorkOrdersByStatus.getResultList();
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException {
+	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
-		Assembly mfgAssembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
-		//TODO check if Assembly was found (NPE)!
+		Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
+		// TODO check if Assembly was found (NPE)!
 		// get (and remove) required parts from inventory and order new parts if needed
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
-		for (Bom bom : mfgAssembly.getAssemblyBoms()) {
+		for (Bom bom : assembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
 			Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), workOrder.getLocation());
-			//TODO check if Assembly was found (NPE)!
+			// TODO check if Assembly was found (NPE)!
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
-				componentDemands
-						.add(new ComponentDemand(bom.getComponentId(), orderQuantity, inventory.getLocation()));
+				componentDemands.add(new ComponentDemand(bom.getComponentId(), orderQuantity, inventory.getLocation()));
 				inventory.addQuantityInOrder(orderQuantity);
 			}
 			inventory.reduceQuantityOnHand(requiredQuantity);
@@ -81,7 +82,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 		// send order
 		if (componentDemands.size() > 0) {
-			
+
 			try {
 				Collection<PurchaseOrder> purchaseOrders = componentDemandPurchaser.purchase(componentDemands);
 				for (PurchaseOrder purchaseOrder : purchaseOrders) {
@@ -91,7 +92,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 				log.error(e.getMessage());
 				throw e;
 			}
-			
+
 		}
 		return workOrder.getId();
 	}
@@ -100,17 +101,19 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	 * @return 0: nothing needs to be done<br>
 	 *         >0: quantity which must be ordered
 	 */
-	private int getQuantityToBeOrdered(Inventory inventory, int requiredQuantity) {
+	private int getQuantityToBeOrdered(Inventory inventory, int requiredQuantity)
+			throws InventoryHasNotEnoughPartsException {
 		// check low water mark
-		if ((inventory.getQuantityInOrder() + inventory.getQuantityOnHand() - requiredQuantity) < inventory.getComponent()
-				.getLomark()) {
+		if ((inventory.getQuantityInOrder() + inventory.getQuantityOnHand() - requiredQuantity) < inventory
+				.getComponent().getLomark()) {
 			return inventory.getComponent().getHimark() - inventory.getQuantityInOrder()
 					- inventory.getQuantityOnHand();
 		}
 		if ((inventory.getQuantityOnHand() - requiredQuantity) < 0) {
-			// should rollback the txn
-			throw new RuntimeException("##### error in inventory: compId:" + inventory.getComponentId() + " location:"
-					+ inventory.getLocation() + " -> not enough parts available");
+			throw new InventoryHasNotEnoughPartsException(
+					"Not enough parts available in Inventory with component id " + inventory.getComponentId()
+							+ " and location " + inventory.getLocation() + " ! Required quantity is: "
+							+ requiredQuantity + ", Available quantity is: " + inventory.getQuantityOnHand() + " !");
 		}
 		return 0;
 	}
@@ -137,7 +140,8 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 			workOrder.setStatusCompleted();
 			workOrder.setCompletedQuantity(manufacturedQuantity);
 			if (doesNotBelongToOrderFromOrderDomain(workOrder)) {
-				Inventory inventory = manufactureSession.getInventory(workOrder.getAssemblyId(), workOrder.getLocation());
+				Inventory inventory = manufactureSession.getInventory(workOrder.getAssemblyId(),
+						workOrder.getLocation());
 				inventory.addQuantityOnHand(manufacturedQuantity);
 			}
 		}

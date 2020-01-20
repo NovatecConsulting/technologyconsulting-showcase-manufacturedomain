@@ -5,6 +5,7 @@ import java.util.Collection;
 import de.novatec.showcase.manufacture.client.supplier.RestcallException;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
 
 public interface WorkOrderService {
 	public WorkOrder findWorkOrder(Integer workOrderID);
@@ -13,7 +14,7 @@ public interface WorkOrderService {
 
 	public Collection<WorkOrder> getWorkOrderByStatus(WorkOrderStatus status);
 
-	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException;
+	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException;
 
 	public void completeWorkOrder(Integer workOrderId, int manufacturedQuantity);
 

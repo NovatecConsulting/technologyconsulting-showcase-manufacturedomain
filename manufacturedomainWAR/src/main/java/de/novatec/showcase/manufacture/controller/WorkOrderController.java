@@ -34,6 +34,7 @@ import de.novatec.showcase.manufacture.client.supplier.RestcallException;
 import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
@@ -148,6 +149,10 @@ public class WorkOrderController {
 		        responseCode = "500",
 		        description = "Rest call to supplier domain purchase has failed",
 		        content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	            		responseCode = "412",
+	            		description = "One of the preconditions failed",
+	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	        @APIResponse(
 	            responseCode = "201",
 	            description = "The new created WorkOrder.",
@@ -172,7 +177,10 @@ public class WorkOrderController {
 		} catch (RestcallException e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
-		}
+		} catch (InventoryHasNotEnoughPartsException e) {
+		return Response.status(Response.Status.PRECONDITION_FAILED)
+				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+	}
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(id))).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
