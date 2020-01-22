@@ -26,6 +26,7 @@ import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
+import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -42,8 +43,12 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	private ComponentDemandPurchaser componentDemandPurchaser = new ComponentDemandPurchaser();
 
 	@Override
-	public WorkOrder findWorkOrder(Integer wordOrderId) {
-		return em.find(WorkOrder.class, wordOrderId);
+	public WorkOrder findWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException {
+		WorkOrder workOrder = em.find(WorkOrder.class, workOrderId);
+		if (workOrder == null) {
+			throw new WorkOrderNotFoundException("The WorkOrder with the id " + workOrderId + "was not found!");
+		}
+		return workOrder;
 	}
 
 	@Override
@@ -61,7 +66,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public int scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException {
+	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
 		Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
@@ -94,7 +99,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 			}
 
 		}
-		return workOrder.getId();
+		return workOrder;
 	}
 
 	/**
@@ -120,7 +125,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void cancelWorkOrder(Integer workOrderId) {
+	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCancelable(workOrder)) {
 			Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
@@ -130,11 +135,12 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 			}
 			workOrder.setStatusCancelled();
 		}
+		return workOrder;
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void completeWorkOrder(Integer workOrderId, int manufacturedQuantity) {
+	public WorkOrder completeWorkOrder(Integer workOrderId, int manufacturedQuantity) throws WorkOrderNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCompletable(workOrder)) {
 			workOrder.setStatusCompleted();
@@ -145,11 +151,12 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 				inventory.addQuantityOnHand(manufacturedQuantity);
 			}
 		}
+		return workOrder;
 	}
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void advanceWorkOrderStatus(Integer workOrderId) {
+	public WorkOrder advanceWorkOrderStatus(Integer workOrderId) throws WorkOrderNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 
 		if (isAdvanceable(workOrder)) {
@@ -162,6 +169,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 				workOrder.setStartDate(Calendar.getInstance());
 			}
 		}
+		return workOrder;
 	}
 
 	private boolean isCancelable(WorkOrder workOrder) {

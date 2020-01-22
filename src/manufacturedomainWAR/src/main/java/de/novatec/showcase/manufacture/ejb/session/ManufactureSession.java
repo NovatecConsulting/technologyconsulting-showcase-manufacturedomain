@@ -110,7 +110,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public String createAssembly(Assembly assembly) {
+	public String (Assembly assembly) {
 		em.persist(assembly);
 		return assembly.getId();
 	}

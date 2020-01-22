@@ -36,13 +36,14 @@ import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
+import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
 @Path(value = "/workorder")
 @RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.WORKORDER_READ_ROLE_NAME})
 @Tags(value= {@Tag(name = "WorkOrder")})
-public class WorkOrderController {
+public class WorkOrderResource {
 
 	@EJB
 	protected WorkOrderSessionLocal bean;
@@ -57,7 +58,7 @@ public class WorkOrderController {
 	            description = "WorkOrder not found",
 	            content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	        @APIResponse(
-	        		responseCode = "500",
+	        		responseCode = "400",
 	        		description = "WorkOrder id is less than 1",
 	      		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	        @APIResponse(
@@ -74,14 +75,16 @@ public class WorkOrderController {
 		        required = true,
 		        example = "1",
 		        schema = @Schema(type = SchemaType.INTEGER)) 
-			@PathParam("id") Integer workorderId) {
-		if (workorderId.intValue() <= 0) {
-			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			@PathParam("id") Integer workOrderId) {
+		if (workOrderId.intValue() <= 0) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		de.novatec.showcase.manufacture.ejb.entity.WorkOrder workOrder = bean.findWorkOrder(workorderId);
-		if (workOrder == null) {
+		de.novatec.showcase.manufacture.ejb.entity.WorkOrder workOrder;
+		try {
+			workOrder = bean.findWorkOrder(workOrderId);
+		} catch (WorkOrderNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("WorkOrder with id '" + workorderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(DtoMapper.mapToWorkOrderDto(workOrder)).type(MediaType.APPLICATION_JSON_TYPE)
 				.build();
@@ -171,9 +174,9 @@ public class WorkOrderController {
 		summary = "Schedule a new WorkOrder",
 		description = "Schedule a new WorkOrder from the given suppier object.")
 	public Response scheduleWorkOrder(@Valid WorkOrder workOrder, @Context UriInfo uriInfo) {
-		Integer id;
+		de.novatec.showcase.manufacture.ejb.entity.WorkOrder scheduledWorkOrder;
 		try {
-			id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
+			scheduledWorkOrder = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
 		} catch (RestcallException e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -181,7 +184,7 @@ public class WorkOrderController {
 		return Response.status(Response.Status.PRECONDITION_FAILED)
 				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 	}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(id))).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(scheduledWorkOrder)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@DELETE
@@ -190,8 +193,12 @@ public class WorkOrderController {
 	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@APIResponses(
 	     value = {
+	 	     @APIResponse(
+	 		        responseCode = "404",
+	 		        description = "WorkOrder with given id not found",
+ 		            content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 		     @APIResponse(
-		        	responseCode = "500",
+		        	responseCode = "400",
 		        	description = "WorkOrder id is less than 1",
 		        	content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	         @APIResponse(
@@ -210,10 +217,15 @@ public class WorkOrderController {
 		        schema = @Schema(type = SchemaType.INTEGER)) 
 			@PathParam("id") Integer workOrderId, @Context UriInfo uriInfo) {
 		if (workOrderId.intValue() <= 0) {
-			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		bean.cancelWorkOrder(workOrderId);
-		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workOrderId));
+		WorkOrder workOrder;
+		try {
+			workOrder = DtoMapper.mapToWorkOrderDto(bean.cancelWorkOrder(workOrderId));
+		} catch (WorkOrderNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+		}
 		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
@@ -223,11 +235,15 @@ public class WorkOrderController {
 	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@Path(value = "{workOrderId}/{manufacturedQuantity}")
 	@APIResponses(
-	     value = {
+		value = {
+		     @APIResponse(
+		    	responseCode = "404",
+			 	description = "WorkOrder with given id not found",
+		 		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 		    @APIResponse(
-		        	responseCode = "500",
-		        	description = "WorkOrder id or manufactured quantity is less than 1",
-		        	content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		        responseCode = "400",
+		        description = "WorkOrder id or manufactured quantity is less than 1",
+		        content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	        @APIResponse(
 	            responseCode = "200",
 	            description = "WorkOrder with the given id is canceled.",
@@ -251,10 +267,15 @@ public class WorkOrderController {
 			@PathParam("manufacturedQuantity")Integer manufacturedQuantity, 
 			@Context UriInfo uriInfo) {
 		if (workOrderId.intValue() <= 0 || manufacturedQuantity <= 0) {
-			return Response.serverError().entity("WorkOrder id or manufactored quantity cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("WorkOrder id or manufactored quantity cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		bean.completeWorkOrder(workOrderId, manufacturedQuantity);
-		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workOrderId.intValue()));
+		WorkOrder workOrder;
+		try {
+			workOrder = DtoMapper.mapToWorkOrderDto(bean.completeWorkOrder(workOrderId, manufacturedQuantity));
+		} catch (WorkOrderNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+		}
 		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
@@ -264,9 +285,13 @@ public class WorkOrderController {
 	@Path(value = "advance_status/{id}")
 	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@APIResponses(
-	     value = {
+			value = {
+			     @APIResponse(
+			    	responseCode = "404",
+				 	description = "WorkOrder with given id not found",
+			 		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 		    @APIResponse(
-		        	responseCode = "500",
+		        	responseCode = "400",
 		        	description = "WorkOrder id is less than 1",
 		        	content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	        @APIResponse(
@@ -285,10 +310,16 @@ public class WorkOrderController {
 		            schema = @Schema(type = SchemaType.INTEGER)) 
 			@PathParam("id") Integer workOrderId, @Context UriInfo uriInfo) {
 		if (workOrderId.intValue() <= 0) {
-			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		bean.advanceWorkOrderStatus(workOrderId);
-		WorkOrder workOrder = DtoMapper.mapToWorkOrderDto(bean.findWorkOrder(workOrderId));
+		;
+		WorkOrder workOrder;
+		try {
+			workOrder = DtoMapper.mapToWorkOrderDto(bean.advanceWorkOrderStatus(workOrderId));
+		} catch (WorkOrderNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+		}
 		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 }
