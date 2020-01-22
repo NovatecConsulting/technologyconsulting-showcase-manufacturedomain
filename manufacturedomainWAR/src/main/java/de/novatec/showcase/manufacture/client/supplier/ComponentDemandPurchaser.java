@@ -3,6 +3,8 @@ package de.novatec.showcase.manufacture.client.supplier;
 import java.util.Collection;
 import java.util.List;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -13,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -23,6 +27,10 @@ import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 public class ComponentDemandPurchaser {
 
+	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL = "supplierdomain.purchase.url";
+	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME = "supplierdomain.username";
+	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD = "supplierdomain.password";
+	private static final Logger log = LoggerFactory.getLogger(ComponentDemandPurchaser.class);
 	private static final String USERNAME = System.getProperty("username.supplier");
 	private static final String PASSWORD = System.getProperty("password.supplier");
 	private static final String PORT = System.getProperty("http.port.supplier");
@@ -30,6 +38,9 @@ public class ComponentDemandPurchaser {
 
 	private static final String SUPPLIER_URL = BASE_URL + "supplier/";
 	private static final String PURCHASE_URL = SUPPLIER_URL + "purchase/";
+	private String purchaseUrl = PURCHASE_URL;
+	private String username = USERNAME;
+	private String password = PASSWORD;
 	private Client client;
 
 	public ComponentDemandPurchaser() {
@@ -37,23 +48,33 @@ public class ComponentDemandPurchaser {
 		client.register(JacksonJsonProvider.class);
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basicBuilder().build();
 		client.register(feature);
+
+		try {
+			purchaseUrl = (String) new InitialContext().lookup(JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL);
+			username = (String) new InitialContext().lookup(JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME);
+			password = (String) new InitialContext().lookup(JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD);
+		} catch (NamingException e) {
+			log.warn("JNDI properties " + JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL + " or "
+					+ JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME + " or " + JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD
+					+ " not found! Using system properties where possible!", e);
+		}
 	}
 
 	public Collection<PurchaseOrder> purchase(List<ComponentDemand> componentDemands) throws RestcallException {
-		WebTarget target = client.target(PURCHASE_URL);
-		Response response = asOrderer(target.request(MediaType.APPLICATION_JSON_TYPE))
-				.post(Entity.json(new ComponentDemands().setComponentDemands(DtoMapper.mapToComponentDemandDto(componentDemands))));
+		WebTarget target = client.target(purchaseUrl);
+		Response response = asOrderer(target.request(MediaType.APPLICATION_JSON_TYPE)).post(Entity
+				.json(new ComponentDemands().setComponentDemands(DtoMapper.mapToComponentDemandDto(componentDemands))));
 		if (response.getStatus() == Response.Status.CREATED.getStatusCode()) {
 			return response.readEntity(new GenericType<List<PurchaseOrder>>() {
 			});
 		}
-		throw new RestcallException(
-				"Error " + Response.Status.fromStatusCode(response.getStatus()) + " while calling " + PURCHASE_URL + " with " + componentDemands + ". " + response.readEntity(String.class));
+		throw new RestcallException("Error " + Response.Status.fromStatusCode(response.getStatus()) + " while calling "
+				+ purchaseUrl + " with " + componentDemands + ". " + response.readEntity(String.class));
 
 	}
 
-	private static Builder asOrderer(Builder builder) {
-		return asUser(builder, USERNAME, PASSWORD);
+	private Builder asOrderer(Builder builder) {
+		return asUser(builder, username, password);
 	}
 
 	private static Builder asUser(Builder builder, String userName, String password) {

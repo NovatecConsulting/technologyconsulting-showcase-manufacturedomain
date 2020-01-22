@@ -27,6 +27,10 @@
 		<properties	url="jdbc:h2:mem:order_db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;TRACE_LEVEL_FILE=4" />
 	</dataSource>
 
+	<jndiEntry jndiName="supplierdomain.purchase.url" value="http://localhost:9090/supplierdomain/supplier/purchase/"/>
+	<jndiEntry jndiName="supplierdomain.username" value="orderer"/>
+	<jndiEntry jndiName="supplierdomain.password" value="pwd"/>
+
 	<basicRegistry id="basic" realm="defaultRealm">
 		<user name="admin" password="adminpwd" />
 		<user name="testuser" password="pwd" />
