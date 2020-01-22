@@ -35,6 +35,7 @@ import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
+import de.novatec.showcase.manufacture.ejb.session.exception.ComponentNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
@@ -219,9 +220,11 @@ public abstract class BaseComponentResource {
         summary = "Create a new Inventory",
         description = "Create a new Inventory by the given Inventory object.")
 	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
-		Inventory createdInventory = DtoMapper
-				.mapToInventoryDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
-		if (createdInventory == null) {
+		Inventory createdInventory;
+		try {
+			createdInventory = DtoMapper
+					.mapToInventoryDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
+		} catch (ComponentNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + inventory.getComponentId() + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		}
@@ -264,11 +267,9 @@ public abstract class BaseComponentResource {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Assembly with id '" + bom.getAssemblyId() + "' not found!")
 					.type(MediaType.TEXT_PLAIN).build();
-		}
-		if (createdBom == null) {
+		} catch (ComponentNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Component with id '" + bom.getComponentId() + "' or " + "Assembly with id '"
-							+ bom.getAssemblyId() + "' not found!")
+					.entity("Component with id '" + bom.getComponentId() + "' not found!")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdBom).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -283,7 +284,7 @@ public abstract class BaseComponentResource {
 	        value = {
                @APIResponse(
 	                responseCode = "404",
-	                description = "Assembly not found",
+	                description = "Assembly or Component not found",
 	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	 		   @APIResponse(
 	 				responseCode = "406",
@@ -312,6 +313,10 @@ public abstract class BaseComponentResource {
 			} catch (AssemblyNotFoundException e) {
 				return Response.status(Response.Status.NOT_FOUND)
 						.entity("Assembly with id '" + bomPK.getAssemblyId() + "' not found!")
+						.type(MediaType.TEXT_PLAIN).build();
+			} catch (ComponentNotFoundException e) {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("Component with id '" + bomPK.getAssemblyId() + "' not found!")
 						.type(MediaType.TEXT_PLAIN).build();
 			}
 			return Response.ok().build();

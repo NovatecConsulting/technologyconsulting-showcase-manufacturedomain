@@ -10,10 +10,11 @@ import de.novatec.showcase.manufacture.ejb.entity.Component;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
+import de.novatec.showcase.manufacture.ejb.session.exception.ComponentNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 
 public interface ManufactureService {
-	Component findComponent(String id);
+	Component findComponent(String id) throws ComponentNotFoundException;
 
 	Collection<Component> getAllComponents();
 
@@ -31,15 +32,15 @@ public interface ManufactureService {
 
 	void deliver(List<ComponentDemand> delivery) throws InventoryNotFoundException;
 
-	String createComponent(Component component);
+	Component createComponent(Component component);
 
 	Assembly createAssembly(Assembly assembly);
 
-	Inventory createInventory(Inventory inventory);
+	Inventory createInventory(Inventory inventory) throws ComponentNotFoundException;
 
-	Bom createBom(Bom bom) throws AssemblyNotFoundException;
+	Bom createBom(Bom bom) throws AssemblyNotFoundException, ComponentNotFoundException;
 
 	Bom findBom(BomPK bomPK);
 
-	void addBomToComponent(BomPK bomPK) throws AssemblyNotFoundException;
+	void addBomToComponent(BomPK bomPK) throws AssemblyNotFoundException, ComponentNotFoundException;
 }

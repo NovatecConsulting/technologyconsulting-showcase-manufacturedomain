@@ -29,6 +29,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Component;
+import de.novatec.showcase.manufacture.ejb.session.exception.ComponentNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
@@ -67,12 +68,14 @@ public class ComponentResource extends BaseComponentResource {
 		if (Integer.valueOf(componentId).intValue() <= 0) {
 			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		de.novatec.showcase.manufacture.ejb.entity.Component component = bean.findComponent(componentId);
-		if (component == null) {
+		Component component;
+		try {
+			component = DtoMapper.mapToComponentDto(bean.findComponent(componentId));
+		} catch (ComponentNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + componentId + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.ok().entity(DtoMapper.mapToComponentDto(component)).type(MediaType.APPLICATION_JSON_TYPE)
+		return Response.ok().entity(component).type(MediaType.APPLICATION_JSON_TYPE)
 				.build();
 	}
 
@@ -95,7 +98,7 @@ public class ComponentResource extends BaseComponentResource {
 	public Response getComponents() {
 		Collection<Component> components = DtoMapper.mapToComponentDto(bean.getAllComponents());
 
-		if (components == null) {
+		if (components.isEmpty()) {
 			return Response.status(Response.Status.NOT_FOUND).entity("No Component found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(components).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -108,15 +111,19 @@ public class ComponentResource extends BaseComponentResource {
 	@APIResponses(
 	        value = {
 	            @APIResponse(
-	                responseCode = "201",
-	                description = "The new Component.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Component.class))) })
+		                responseCode = "400",
+		                description = "Component is not valid",
+		                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            @APIResponse(
+	            		responseCode = "201",
+	            		description = "The new Component.",
+	            		content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	            		schema = @Schema(implementation = Component.class))) })
 		@RequestBody(
             name="component",
             content = @Content(
-                mediaType = MediaType.APPLICATION_JSON,
-                schema = @Schema(implementation = Component.class)),
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = Component.class)),
             required = true,
             description = "example of a Component obejct."
         )
@@ -124,7 +131,8 @@ public class ComponentResource extends BaseComponentResource {
             summary = "Create a new Component",
             description = "Create a new Component by the given Component object.")
 	public Response createComponent(@Valid Component component, @Context UriInfo uriInfo) {
-		String id = bean.createComponent(DtoMapper.mapToComponentEntity(component));
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findComponent(id)).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build())
+				.entity(bean.createComponent(DtoMapper.mapToComponentEntity(component)))
+				.type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 }
