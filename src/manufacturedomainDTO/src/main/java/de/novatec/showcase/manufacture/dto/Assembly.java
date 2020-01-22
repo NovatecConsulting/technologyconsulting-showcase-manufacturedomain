@@ -30,11 +30,10 @@ public class Assembly extends Component {
 
 	@Override
 	public String toString() {
-		return "Assembly [assemblyBoms=" + assemblyBoms + ", getId()=" + getId() + ", getName()=" + getName()
-				+ ", getDescription()=" + getDescription() + ", getRevision()=" + getRevision() + ", getPlanner()="
-				+ getPlanner() + ", getType()=" + getType() + ", getPurchased()=" + getPurchased() + ", getLomark()="
-				+ getLomark() + ", getHimark()=" + getHimark() + ", getComponentBoms()=" + getComponentBoms()
-				+ ", getVersion()=" + getVersion() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ ", getClass()=" + getClass() + "]";
+		return "Assembly [assemblyBoms=" + assemblyBoms + ", id=" + getId() + ", name=" + getName()
+				+ ", description=" + getDescription() + ", revision=" + getRevision() + ", planner="
+				+ getPlanner() + ", type=" + getType() + ", purchased=" + getPurchased() + ", lomark="
+				+ getLomark() + ", himark=" + getHimark() + ", componentBoms=" + getComponentBoms()
+				+ ", version=" + getVersion() + "]";
 	}
 }

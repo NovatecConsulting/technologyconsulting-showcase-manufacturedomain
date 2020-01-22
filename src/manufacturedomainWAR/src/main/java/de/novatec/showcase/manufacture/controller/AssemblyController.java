@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.annotation.ManagedBean;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -153,7 +154,7 @@ public class AssemblyController {
     @Operation(
             summary = "Create a new Assembly",
             description = "Create a new Assembly by the given Assembly object.")
-	public Response createAssembly(Assembly assembly, @Context UriInfo uriInfo) {
+	public Response createAssembly(@Valid Assembly assembly, @Context UriInfo uriInfo) {
 		// TODO validate assembly
 		String id = bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly));
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findAssembly(id)).type(MediaType.APPLICATION_JSON_TYPE).build();
