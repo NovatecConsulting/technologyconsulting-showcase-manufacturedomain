@@ -34,7 +34,7 @@ import de.novatec.showcase.manufacture.mapper.DtoMapper;
 @ManagedBean
 @Path(value = "/component")
 @Tags(value= {@Tag(name = "Component")})
-public class ComponentController extends BaseComponentController {
+public class ComponentResource extends BaseComponentResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

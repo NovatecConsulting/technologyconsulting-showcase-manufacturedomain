@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 import de.novatec.showcase.manufacture.ejb.entity.Assembly;
@@ -19,6 +18,7 @@ import de.novatec.showcase.manufacture.ejb.entity.Component;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.InventoryPK;
+import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 
 @Stateless
@@ -40,8 +40,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public Assembly findAssembly(String componentId) {
-		return em.find(Assembly.class, componentId);
+	public Assembly findAssembly(String componentId) throws AssemblyNotFoundException {
+		Assembly assembly = em.find(Assembly.class, componentId);
+		return assembly;
 	}
 
 	@Override
@@ -110,9 +111,9 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public String (Assembly assembly) {
+	public Assembly createAssembly(Assembly assembly) {
 		em.persist(assembly);
-		return assembly.getId();
+		return assembly;
 	}
 
 	@Override
@@ -128,7 +129,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Bom createBom(Bom bom) {
+	public Bom createBom(Bom bom) throws AssemblyNotFoundException {
 		if (this.findComponent(bom.getComponentId()) != null
 				&& this.findAssembly(bom.getAssemblyId()) != null) {
 			em.persist(bom);
@@ -140,7 +141,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void addBomToComponent(BomPK bomPK) {
+	public void addBomToComponent(BomPK bomPK) throws AssemblyNotFoundException {
 		Component component = this.findComponent(bomPK.getComponentId());
 		Assembly assembly = this.findAssembly(bomPK.getAssemblyId());
 		Bom bom = this.findBom(bomPK);

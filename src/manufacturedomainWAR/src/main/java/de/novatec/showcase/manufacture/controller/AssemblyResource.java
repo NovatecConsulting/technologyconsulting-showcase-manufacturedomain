@@ -32,13 +32,14 @@ import de.novatec.showcase.manufacture.GlobalConstants;
 import de.novatec.showcase.manufacture.dto.Assembly;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
+import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @ManagedBean
 @Path(value = "/assembly")
 @RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME })
 @Tags(value= {@Tag(name = "Assembly")})
-public class AssemblyController {
+public class AssemblyResource {
 
 	@EJB
 	protected ManufactureSessionLocal bean;
@@ -49,18 +50,18 @@ public class AssemblyController {
 	@APIResponses(
 	        value = {
 	            @APIResponse(
-	                responseCode = "404",
-	                description = "Assembly not found",
-	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            		responseCode = "404",
+	            		description = "Assembly not found",
+	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
 	            		responseCode = "500",
 	            		description = "Assembly id is less than 1",
 	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "200",
-	                description = "The Assembly with the given id.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Assembly.class))) })
+	            		responseCode = "200",
+	            		description = "The Assembly with the given id.",
+	            		content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	            		schema = @Schema(implementation = Assembly.class))) })
     @Operation(
             summary = "Get the Assembly",
             description = "Get the Assembly by id.")
@@ -74,12 +75,14 @@ public class AssemblyController {
 		if (Integer.valueOf(assemblyId).intValue() <= 0) {
 			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		de.novatec.showcase.manufacture.ejb.entity.Assembly assembly = bean.findAssembly(assemblyId);
-		if (assembly == null) {
+		Assembly assembly;
+		try {
+			assembly = DtoMapper.mapToAssemblyDto(bean.findAssembly(assemblyId));
+		} catch (AssemblyNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND).entity("Assembly with id '" + assemblyId + "' not found!")
 					.type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.ok().entity(DtoMapper.mapToAssemblyDto(assembly)).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.ok().entity(assembly).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@GET
@@ -87,21 +90,21 @@ public class AssemblyController {
 	@APIResponses(
 	        value = {
 	            @APIResponse(
-	                responseCode = "404",
-	                description = "Assembly not found",
-	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            		responseCode = "404",
+	            		description = "Assembly not found",
+	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "200",
-	                description = "The Assembly with the given id.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Assembly.class))) })
+	            		responseCode = "200",
+	            		description = "The Assembly with the given id.",
+	            		content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	            		schema = @Schema(implementation = Assembly.class))) })
     @Operation(
             summary = "Get the assemblies",
             description = "Get the assemblies.")
 	public Response getAssemblies() {
 		Collection<Assembly> assemblies = DtoMapper.mapToAssemblyDto(bean.getAllAssemblies());
 
-		if (assemblies == null) {
+		if (assemblies.isEmpty()) {
 			return Response.status(Response.Status.NOT_FOUND).entity("No Assembly found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(assemblies).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -113,20 +116,20 @@ public class AssemblyController {
 	@APIResponses(
 	        value = {
 	            @APIResponse(
-	                responseCode = "404",
-	                description = "No Assembly ids found",
-	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	            		responseCode = "404",
+	            		description = "No Assembly ids found",
+	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "200",
-	                description = "The Assembly ids which where found.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Assembly.class))) })
+	            		responseCode = "200",
+	            		description = "The Assembly ids which where found.",
+	            		content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	            		schema = @Schema(implementation = Assembly.class))) })
     @Operation(
           summary = "Get the ids of the assemblies",
           description = "Get the ids of the assemblies.")
 	public Response getAssemblyIds() {
 		Collection<String> assembliesIds = bean.getAllAssemblyIds();
-		if (assembliesIds == null) {
+		if (assembliesIds.isEmpty()) {
 			return Response.status(Response.Status.NOT_FOUND).entity("No Assembly found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(assembliesIds).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -138,11 +141,15 @@ public class AssemblyController {
 	@RolesAllowed({GlobalConstants.ADMIN_ROLE_NAME})
 	@APIResponses(
 	        value = {
+			    @APIResponse(
+			    		responseCode = "400",
+			    		description = "Assembly is not valid",
+			    		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "201",
-	                description = "The new Assembly.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Assembly.class))) })
+	            		responseCode = "201",
+	            		description = "The new Assembly.",
+	            		content = @Content(mediaType = MediaType.APPLICATION_JSON,
+	            		schema = @Schema(implementation = Assembly.class))) })
 		@RequestBody(
             name="assembly",
             content = @Content(
@@ -155,8 +162,9 @@ public class AssemblyController {
             summary = "Create a new Assembly",
             description = "Create a new Assembly by the given Assembly object.")
 	public Response createAssembly(@Valid Assembly assembly, @Context UriInfo uriInfo) {
-		String id = bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly));
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findAssembly(id)).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build())
+				.entity(bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly)))
+				.type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 }

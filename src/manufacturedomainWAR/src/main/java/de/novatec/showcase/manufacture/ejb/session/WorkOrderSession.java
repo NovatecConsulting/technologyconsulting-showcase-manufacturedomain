@@ -25,6 +25,7 @@ import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
+import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
 import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 
@@ -66,17 +67,16 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException {
+	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException, AssemblyNotFoundException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
 		Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
-		// TODO check if Assembly was found (NPE)!
 		// get (and remove) required parts from inventory and order new parts if needed
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
 		for (Bom bom : assembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
 			Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), workOrder.getLocation());
-			// TODO check if Assembly was found (NPE)!
+			// TODO check if Inventory was found (NPE)!
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
 				componentDemands.add(new ComponentDemand(bom.getComponentId(), orderQuantity, inventory.getLocation()));
@@ -125,7 +125,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException {
+	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException, AssemblyNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCancelable(workOrder)) {
 			Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());

@@ -35,6 +35,7 @@ import de.novatec.showcase.manufacture.client.supplier.RestcallException;
 import de.novatec.showcase.manufacture.dto.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
+import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
 import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
@@ -150,9 +151,17 @@ public class WorkOrderResource {
 	@APIResponses(
 	    value = {
 	    		@APIResponse(
-		        responseCode = "500",
-		        description = "Rest call to supplier domain purchase has failed",
-		        content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	    				responseCode = "500",
+	    				description = "Rest call to supplier domain purchase has failed",
+	    				content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		        @APIResponse(
+		        		responseCode = "400",
+		        		description = "WorkOrder is not valid",
+		        		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		        @APIResponse(
+			            responseCode = "404",
+			            description = "No Assembly found",
+			            content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
 	            		responseCode = "412",
 	            		description = "One of the preconditions failed",
@@ -183,6 +192,9 @@ public class WorkOrderResource {
 		} catch (InventoryHasNotEnoughPartsException e) {
 		return Response.status(Response.Status.PRECONDITION_FAILED)
 				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+	} catch (AssemblyNotFoundException e) {
+		return Response.status(Response.Status.NOT_FOUND)
+				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 	}
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(scheduledWorkOrder)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -195,7 +207,7 @@ public class WorkOrderResource {
 	     value = {
 	 	     @APIResponse(
 	 		        responseCode = "404",
-	 		        description = "WorkOrder with given id not found",
+	 		        description = "WorkOrder with given id or Assembly not found",
  		            content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 		     @APIResponse(
 		        	responseCode = "400",
@@ -225,6 +237,9 @@ public class WorkOrderResource {
 		} catch (WorkOrderNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+		} catch (AssemblyNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}

@@ -33,13 +33,13 @@ import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
-//import de.novatec.showcase.manufacture.dto.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
+import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
 @RolesAllowed({ GlobalConstants.ADMIN_ROLE_NAME, GlobalConstants.COMPONENT_READ_ROLE_NAME })
-public abstract class BaseComponentController {
+public abstract class BaseComponentResource {
 
 	@EJB
 	protected ManufactureSessionLocal bean;
@@ -257,7 +257,14 @@ public abstract class BaseComponentController {
         summary = "Create a new Bom",
         description = "Create a new Bom by the given Bom object.")
 	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
-		Bom createdBom = DtoMapper.mapToBomDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
+		Bom createdBom;
+		try {
+			createdBom = DtoMapper.mapToBomDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
+		} catch (AssemblyNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("Assembly with id '" + bom.getAssemblyId() + "' not found!")
+					.type(MediaType.TEXT_PLAIN).build();
+		}
 		if (createdBom == null) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("Component with id '" + bom.getComponentId() + "' or " + "Assembly with id '"
@@ -274,6 +281,10 @@ public abstract class BaseComponentController {
 	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
+               @APIResponse(
+	                responseCode = "404",
+	                description = "Assembly not found",
+	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	 		   @APIResponse(
 	 				responseCode = "406",
 	 			    description = "No such Bom with the given BomPK was found.",
@@ -296,7 +307,13 @@ public abstract class BaseComponentController {
         description = "Add the Bom to Comonent by the given BomPK.")
 	public Response addBomToComponent(BomPK bomPK) {
 		if (bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)) != null) {
-			bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
+			try {
+				bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
+			} catch (AssemblyNotFoundException e) {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("Assembly with id '" + bomPK.getAssemblyId() + "' not found!")
+						.type(MediaType.TEXT_PLAIN).build();
+			}
 			return Response.ok().build();
 		}
 		return Response.status(Status.NOT_ACCEPTABLE).build();
