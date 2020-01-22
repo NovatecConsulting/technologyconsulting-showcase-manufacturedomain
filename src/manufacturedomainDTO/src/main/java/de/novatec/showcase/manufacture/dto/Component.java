@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,9 +15,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Schema(name="Component", description="POJO that represents a Component.")
 public class Component {
 
+	@Size(max = 20)
 	private String id;
+	@Size(max = 35)
 	private String name;
+	@Size(max = 100)
 	private String description;
+	@Size(max = 6)
 	private String revision;
 	private Integer planner;
 	private Integer type;

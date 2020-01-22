@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -122,8 +123,7 @@ public class ComponentController extends BaseComponentController {
     @Operation(
             summary = "Create a new Component",
             description = "Create a new Component by the given Component object.")
-	public Response createComponent(Component component, @Context UriInfo uriInfo) {
-		// TODO validate component
+	public Response createComponent(@Valid Component component, @Context UriInfo uriInfo) {
 		String id = bean.createComponent(DtoMapper.mapToComponentEntity(component));
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findComponent(id)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
