@@ -155,7 +155,6 @@ public class AssemblyController {
             summary = "Create a new Assembly",
             description = "Create a new Assembly by the given Assembly object.")
 	public Response createAssembly(@Valid Assembly assembly, @Context UriInfo uriInfo) {
-		// TODO validate assembly
 		String id = bean.createAssembly(DtoMapper.mapToAssemblyEntity(assembly));
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(bean.findAssembly(id)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}

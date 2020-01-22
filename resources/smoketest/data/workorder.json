@@ -6,6 +6,6 @@
 	"completedQuantity": -1,
 	"status": "OPEN",
 	"dueDate": "2020-12-16",
-	"assemblyId": 4,
+	"assemblyId": "4",
 	"version": 0
 }

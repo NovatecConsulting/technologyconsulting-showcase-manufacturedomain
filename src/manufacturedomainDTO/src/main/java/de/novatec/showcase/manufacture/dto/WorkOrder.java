@@ -3,6 +3,8 @@ package de.novatec.showcase.manufacture.dto;
 import java.util.Calendar;
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,6 +26,7 @@ public class WorkOrder {
 	private Calendar dueDate;
 	@JsonFormat(pattern = GlobalConstants.DATE_FORMAT, locale = "de_DE")
 	private Calendar startDate;
+	@Size(max = 20)
 	private String assemblyId;
 	private Integer version;
 

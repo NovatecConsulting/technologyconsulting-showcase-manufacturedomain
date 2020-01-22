@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.annotation.ManagedBean;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -169,8 +170,7 @@ public class WorkOrderController {
 	@Operation(
 		summary = "Schedule a new WorkOrder",
 		description = "Schedule a new WorkOrder from the given suppier object.")
-	public Response scheduleWorkOrder(WorkOrder workOrder, @Context UriInfo uriInfo) {
-		// TODO validate workOrder (there are some fields which has to be set for an initial workorder - have a look in the constructors or workorder.json)
+	public Response scheduleWorkOrder(@Valid WorkOrder workOrder, @Context UriInfo uriInfo) {
 		Integer id;
 		try {
 			id = bean.scheduleWorkOrder(DtoMapper.mapToWorkOrderEntity(workOrder));
