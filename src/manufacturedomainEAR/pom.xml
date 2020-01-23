@@ -22,6 +22,11 @@
 		<!-- Liberty configuration -->
 		<liberty.var.default.http.port>9080</liberty.var.default.http.port>
 		<liberty.var.default.https.port>9443</liberty.var.default.https.port>
+		<liberty.env.HTTP_PORT>${liberty.var.default.http.port}</liberty.env.HTTP_PORT>
+		<liberty.env.HTTPS_PORT>${liberty.var.default.https.port}</liberty.env.HTTPS_PORT>
+		<liberty.env.SUPPLIER_PURCHASE_URL>http://localhost:9090/supplierdomain/supplier/purchase/</liberty.env.SUPPLIER_PURCHASE_URL>
+		<liberty.env.SUPPLIER_USER>orderer</liberty.env.SUPPLIER_USER>
+		<liberty.env.SUPPLIER_PASSWORD>pwd</liberty.env.SUPPLIER_PASSWORD>
 		<http.port.supplier>9090</http.port.supplier>
 		<username.supplier>orderer</username.supplier>
 		<password.supplier>pwd</password.supplier>
