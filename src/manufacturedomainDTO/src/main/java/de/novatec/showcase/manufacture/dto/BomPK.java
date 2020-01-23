@@ -2,6 +2,8 @@ package de.novatec.showcase.manufacture.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(name="BomPK", description="POJO that represents a BomPK.")
@@ -10,8 +12,10 @@ public class BomPK {
 	@Schema(required=true)
 	private int lineNo;
 	@Schema(required=true)
+	@Size(max = 20)
 	private String assemblyId;
 	@Schema(required=true)
+	@Size(max = 20)
 	private String componentId;
 
 	public BomPK() {

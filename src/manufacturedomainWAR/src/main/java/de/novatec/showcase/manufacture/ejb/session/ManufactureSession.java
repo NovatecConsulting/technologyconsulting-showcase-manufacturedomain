@@ -19,6 +19,7 @@ import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.ejb.entity.Inventory;
 import de.novatec.showcase.manufacture.ejb.entity.InventoryPK;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
+import de.novatec.showcase.manufacture.ejb.session.exception.BomNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.ComponentNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 
@@ -64,8 +65,12 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	}
 
 	@Override
-	public Bom findBom(BomPK bomPK) {
-		return em.find(Bom.class, bomPK);
+	public Bom findBom(BomPK bomPK) throws BomNotFoundException {
+		Bom bom = em.find(Bom.class, bomPK);
+		if (bom == null) {
+			throw new BomNotFoundException("The Bom with the BomPK " + bomPK + " was not found!");
+		}
+		return bom;
 	}
 
 	@Override
@@ -75,8 +80,13 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	public Inventory getInventory(String componentId, Integer location) {
-		return em.find(Inventory.class, new InventoryPK(componentId, location));
+	public Inventory getInventory(String componentId, Integer location) throws InventoryNotFoundException {
+		Inventory inventory = em.find(Inventory.class, new InventoryPK(componentId, location));
+		if (inventory == null) {
+			throw new InventoryNotFoundException("The Inventory with the Component/Assembly id " + componentId
+					+ " and location " + location + " was not found!");
+		}
+		return inventory;
 	}
 
 	@Override
@@ -92,7 +102,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	public void deliver(List<ComponentDemand> componentDemands) throws InventoryNotFoundException {
 		for (ComponentDemand componentDemand : componentDemands) {
 			Inventory inventory = this.getInventory(componentDemand.getComponentId(), componentDemand.getLocation());
-			if (inventory != null) {
 				inventory.addQuantityOnHand(componentDemand.getQuantity());
 				// reduce quantity in order
 				if (inventory.getQuantityInOrder() - componentDemand.getQuantity() < 0) {
@@ -101,11 +110,6 @@ public class ManufactureSession implements ManufactureSessionLocal {
 					inventory.reduceQuantityInOrder(componentDemand.getQuantity());
 				}
 				inventory.setAccDate(Calendar.getInstance());
-			} else {
-				throw new InventoryNotFoundException(
-						"Inventory for Component with Id " + componentDemand.getComponentId() + " and location "
-								+ componentDemand.getLocation() + " not found!");
-			}
 		}
 	}
 
@@ -145,14 +149,12 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void addBomToComponent(BomPK bomPK) throws AssemblyNotFoundException, ComponentNotFoundException {
+	public void addBomToComponent(BomPK bomPK) throws AssemblyNotFoundException, ComponentNotFoundException, BomNotFoundException {
 		Component component = this.findComponent(bomPK.getComponentId());
 		Assembly assembly = this.findAssembly(bomPK.getAssemblyId());
 		Bom bom = this.findBom(bomPK);
-		if (bom != null) {
-			component.addComponentBoms(Arrays.asList(bom));
-			assembly.addComponent(bom);
-		}
+		component.addComponentBoms(Arrays.asList(bom));
+		assembly.addComponent(bom);
 		return;
 	}
 

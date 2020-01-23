@@ -7,6 +7,7 @@ import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 
 public interface WorkOrderService {
@@ -16,11 +17,11 @@ public interface WorkOrderService {
 
 	public Collection<WorkOrder> getWorkOrderByStatus(WorkOrderStatus status);
 
-	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException, AssemblyNotFoundException;
+	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException, AssemblyNotFoundException, InventoryNotFoundException;
 
-	public WorkOrder completeWorkOrder(Integer workOrderId, int manufacturedQuantity) throws WorkOrderNotFoundException;
+	public WorkOrder completeWorkOrder(Integer workOrderId, int manufacturedQuantity) throws WorkOrderNotFoundException, InventoryNotFoundException;
 
-	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException, AssemblyNotFoundException;
+	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException, AssemblyNotFoundException, InventoryNotFoundException;
 
 	public WorkOrder advanceWorkOrderStatus(Integer workOrderId) throws WorkOrderNotFoundException;
 }

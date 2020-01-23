@@ -2,6 +2,8 @@ package de.novatec.showcase.manufacture.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,12 +12,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bom {
 
+	@Size(max = 20)
 	private String componentId;
+	@Size(max = 20)
 	private String assemblyId;
 	private int lineNo;
 	private int quantity;
+	@Size(max = 10)
 	private String engChange;
 	private int opsNo;
+	@Size(max = 100)
 	private String opsDesc;
 	
 	private Integer version;

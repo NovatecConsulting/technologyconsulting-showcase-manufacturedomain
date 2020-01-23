@@ -2,12 +2,15 @@ package de.novatec.showcase.manufacture.dto;
 
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(name="ComponentDemand", description="POJO that represents a ComponentDemand.")
 public class ComponentDemand {
 
 	@Schema(required=true)
+	@Size(max = 20)
 	private String componentId;
 	@Schema(required=true)
 	private int quantity;

@@ -37,6 +37,7 @@ import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.WorkOrderSessionLocal;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
@@ -195,6 +196,9 @@ public class WorkOrderResource {
 	} catch (AssemblyNotFoundException e) {
 		return Response.status(Response.Status.NOT_FOUND)
 				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+	} catch (InventoryNotFoundException e) {
+		return Response.status(Response.Status.NOT_FOUND)
+				.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 	}
 		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(DtoMapper.mapToWorkOrderDto(scheduledWorkOrder)).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -238,6 +242,9 @@ public class WorkOrderResource {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
 		} catch (AssemblyNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+		} catch (InventoryNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
@@ -289,7 +296,10 @@ public class WorkOrderResource {
 			workOrder = DtoMapper.mapToWorkOrderDto(bean.completeWorkOrder(workOrderId, manufacturedQuantity));
 		} catch (WorkOrderNotFoundException e) {
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("WorkOrder with id '" + workOrderId + "' not found!").type(MediaType.TEXT_PLAIN).build();
+					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+		} catch (InventoryNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok(uriInfo.getAbsolutePathBuilder().build()).entity(workOrder).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}

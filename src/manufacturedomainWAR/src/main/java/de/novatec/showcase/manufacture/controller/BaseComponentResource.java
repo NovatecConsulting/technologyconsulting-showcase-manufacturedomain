@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -35,6 +36,7 @@ import de.novatec.showcase.manufacture.dto.ComponentDemands;
 import de.novatec.showcase.manufacture.dto.Inventory;
 import de.novatec.showcase.manufacture.ejb.session.ManufactureSessionLocal;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
+import de.novatec.showcase.manufacture.ejb.session.exception.BomNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.ComponentNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
@@ -65,7 +67,7 @@ public abstract class BaseComponentResource {
 	    description = "Get all available Boms.")
 	public Response getAllBoms() {
 		Collection<Bom> boms = DtoMapper.mapToBomDto(bean.getAllBoms());
-		if (boms == null) {
+		if (boms.isEmpty()) {
 			return Response.status(Response.Status.NOT_FOUND).entity("No Boms found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(boms).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -77,15 +79,19 @@ public abstract class BaseComponentResource {
 	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
+			 		@APIResponse(
+					 		responseCode = "400",
+					 		description = "ComponentId/location has to be greater than 0.",
+					 		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "404",
-	                description = "Bom not found",
-	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		                responseCode = "404",
+		                description = "Bom not found",
+		                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	                responseCode = "200",
-	                description = "The Bom with the given component id, assembly id and lineNo.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Assembly.class))) })
+		                responseCode = "200",
+		                description = "The Bom with the given component id, assembly id and lineNo.",
+		                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+		                schema = @Schema(implementation = Assembly.class))) })
     @Operation(
 	    summary = "Get the Bom",
 	    description = "Get Bom by lineNo, componentId and assemblyId.")
@@ -95,23 +101,25 @@ public abstract class BaseComponentResource {
 		            required = true,
 		            example = "1",
 		            schema = @Schema(type = SchemaType.INTEGER)) 
-			@PathParam("lineNo") Integer lineNo, 
+			@PathParam("lineNo") @NotNull Integer lineNo, 
 			@Parameter(
 		            description = "The componentId of the Bom.",
 		            required = true,
 		            example = "1",
 		            schema = @Schema(type = SchemaType.STRING)) 
-			@PathParam("componentId") String componentId,
+			@PathParam("componentId") @NotNull String componentId,
 			@Parameter(
 		            description = "The assemblyId of the Bom.",
 		            required = true,
 		            example = "1",
 		            schema = @Schema(type = SchemaType.STRING)) 
-			@PathParam("assemblyId") String assemblyId) {
+			@PathParam("assemblyId") @NotNull String assemblyId) {
 		BomPK bomPK = new BomPK(componentId,assemblyId, lineNo);
-		Bom bom = DtoMapper.mapToBomDto(bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)));
-		if (bom == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("Bom with BomPK '" + bomPK + "' found!").type(MediaType.TEXT_PLAIN).build();
+		Bom bom;
+		try {
+			bom = DtoMapper.mapToBomDto(bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)));
+		} catch (BomNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(bom).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -127,7 +135,7 @@ public abstract class BaseComponentResource {
 	                description = "Inventory not found",
 	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 		 		@APIResponse(
-			 		responseCode = "500",
+			 		responseCode = "400",
 			 		description = "ComponentId/location has to be greater than 0.",
 			 		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
@@ -144,23 +152,24 @@ public abstract class BaseComponentResource {
 		            required = true,
 		            example = "1",
 		            schema = @Schema(type = SchemaType.STRING)) 
-			@PathParam("componentId") String componentId,
+			@PathParam("componentId") @NotNull String componentId,
 			@Parameter(
 		            description = "The location of the Inventory.",
 		            required = true,
 		            example = "1",
 		            schema = @Schema(type = SchemaType.INTEGER)) 
-			@PathParam("location") Integer location) {
+			@PathParam("location") @NotNull Integer location) {
 		if (Integer.valueOf(componentId).intValue() <= 0) {
-			return Response.serverError().entity("Component id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("Component id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
 		if (location.intValue() <= 0) {
-			return Response.serverError().entity("location cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("location cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
-		Inventory inventory = DtoMapper.mapToInventoryDto(bean.getInventory(componentId, location));
-		if (inventory == null) {
-			return Response.status(Response.Status.NOT_FOUND).entity("Inventory with component/assembly id '"
-					+ componentId + "' and location '" + location + "' has no inventory!").type(MediaType.TEXT_PLAIN).build();
+		Inventory inventory;
+		try {
+			inventory = DtoMapper.mapToInventoryDto(bean.getInventory(componentId, location));
+		} catch (InventoryNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(inventory).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
@@ -185,7 +194,7 @@ public abstract class BaseComponentResource {
     	description = "Get all available Inventories.")
 	public Response getInventories() {
 		Collection<Inventory> inventories = DtoMapper.mapToInventoryDto(bean.getAllInventories());
-		if (inventories == null) {
+		if (inventories.isEmpty()) {
 			return Response.status(Response.Status.NOT_FOUND).entity("No Inventories found!").type(MediaType.TEXT_PLAIN).build();
 		}
 		return Response.ok().entity(inventories).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -199,15 +208,19 @@ public abstract class BaseComponentResource {
 	@Tags(value= {@Tag(name = "Inventory")})
 	@APIResponses(
 	        value = {
-	 		   @APIResponse(
-	 				responseCode = "404",
-	 			    description = "The Component with the given id in the Inventory object does not exist.",
-	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
-	           @APIResponse(
-	                responseCode = "201",
-	                description = "The new Inventory for the given Inventory object.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Inventory.class))) })
+		            @APIResponse(
+		            		responseCode = "400",
+		            		description = "Inventory is not valid",
+		            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		 		   @APIResponse(
+			 				responseCode = "404",
+			 			    description = "The Component with the given id in the Inventory object does not exist.",
+			 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		           @APIResponse(
+			                responseCode = "201",
+			                description = "The new Inventory for the given Inventory object.",
+			                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+			                schema = @Schema(implementation = Inventory.class))) })
 		@RequestBody(
             name="inventory",
             content = @Content(
@@ -219,16 +232,16 @@ public abstract class BaseComponentResource {
     @Operation(
         summary = "Create a new Inventory",
         description = "Create a new Inventory by the given Inventory object.")
-	public Response createInventory(Inventory inventory, @Context UriInfo uriInfo) {
+	public Response createInventory(@Valid Inventory inventory, @Context UriInfo uriInfo) {
 		Inventory createdInventory;
 		try {
 			createdInventory = DtoMapper
 					.mapToInventoryDto(bean.createInventory(DtoMapper.mapToInventoryEntity(inventory)));
 		} catch (ComponentNotFoundException e) {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Component with id '" + inventory.getComponentId() + "' not found!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdInventory).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdInventory)
+				.type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST
@@ -239,15 +252,19 @@ public abstract class BaseComponentResource {
 	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
-	 		   @APIResponse(
-	 				responseCode = "404",
-	 			    description = "The Component/Assembly with the given id in the Bom object does not exist.",
-	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
-	           @APIResponse(
-	                responseCode = "201",
-	                description = "The new Bom for the given inventory object.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = Bom.class))) })
+		            @APIResponse(
+		            		responseCode = "400",
+		            		description = "Bom is not valid",
+		            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		 		   @APIResponse(
+			 				responseCode = "404",
+			 			    description = "The Component/Assembly with the given id in the Bom object does not exist.",
+			 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		           @APIResponse(
+			                responseCode = "201",
+			                description = "The new Bom for the given inventory object.",
+			                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+			                schema = @Schema(implementation = Bom.class))) })
 		@RequestBody(
             name="bom",
             content = @Content(
@@ -259,20 +276,17 @@ public abstract class BaseComponentResource {
     @Operation(
         summary = "Create a new Bom",
         description = "Create a new Bom by the given Bom object.")
-	public Response createBom(Bom bom, @Context UriInfo uriInfo) {
+	public Response createBom(@Valid Bom bom, @Context UriInfo uriInfo) {
 		Bom createdBom;
 		try {
 			createdBom = DtoMapper.mapToBomDto(bean.createBom(DtoMapper.mapToBomEntity(bom)));
 		} catch (AssemblyNotFoundException e) {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Assembly with id '" + bom.getAssemblyId() + "' not found!")
-					.type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		} catch (ComponentNotFoundException e) {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("Component with id '" + bom.getComponentId() + "' not found!")
-					.type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdBom).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return Response.created(uriInfo.getAbsolutePathBuilder().build()).entity(createdBom)
+				.type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
 
 	@POST
@@ -282,19 +296,19 @@ public abstract class BaseComponentResource {
 	@Tags(value= {@Tag(name = "Bom")})
 	@APIResponses(
 	        value = {
-               @APIResponse(
-	                responseCode = "404",
-	                description = "Assembly or Component not found",
-	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
-	 		   @APIResponse(
-	 				responseCode = "406",
-	 			    description = "No such Bom with the given BomPK was found.",
-	 			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
-	           @APIResponse(
-	                responseCode = "200",
-	                description = "The Bom was added to the Component.",
-	                content = @Content(mediaType = MediaType.APPLICATION_JSON,
-	                schema = @Schema(implementation = BomPK.class))) })
+		            @APIResponse(
+		            		responseCode = "400",
+		            		description = "BomPK is not valid",
+		            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+	               @APIResponse(
+			                responseCode = "404",
+			                description = "Assembly or Component not found",
+			                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		           @APIResponse(
+			                responseCode = "200",
+			                description = "The Bom was added to the Component.",
+			                content = @Content(mediaType = MediaType.APPLICATION_JSON,
+			                schema = @Schema(implementation = BomPK.class))) })
 		@RequestBody(
             name="bom",
             content = @Content(
@@ -306,22 +320,17 @@ public abstract class BaseComponentResource {
     @Operation(
         summary = "Add Bom to Component",
         description = "Add the Bom to Comonent by the given BomPK.")
-	public Response addBomToComponent(BomPK bomPK) {
-		if (bean.findBom(DtoMapper.mapToBomPKEntity(bomPK)) != null) {
-			try {
-				bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
-			} catch (AssemblyNotFoundException e) {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("Assembly with id '" + bomPK.getAssemblyId() + "' not found!")
-						.type(MediaType.TEXT_PLAIN).build();
-			} catch (ComponentNotFoundException e) {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("Component with id '" + bomPK.getAssemblyId() + "' not found!")
-						.type(MediaType.TEXT_PLAIN).build();
-			}
-			return Response.ok().build();
+	public Response addBomToComponent(@Valid BomPK bomPK) {
+		try {
+			bean.addBomToComponent(DtoMapper.mapToBomPKEntity(bomPK));
+		} catch (AssemblyNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+		} catch (ComponentNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+		} catch (BomNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
 		}
-		return Response.status(Status.NOT_ACCEPTABLE).build();
+		return Response.ok().build();
 	}
 
 	@POST
@@ -330,13 +339,17 @@ public abstract class BaseComponentResource {
 	@Path(value = "/deliver")
 	@APIResponses(
 	    value = {
-		 	 @APIResponse(
-			 	responseCode = "404",
-			    description = "The Inventory or Component does not exist for the delivered ComponentDemand.",
-			    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
-	         @APIResponse(
-	            responseCode = "200",
-	            description = "The ComponentDemands are dilvered.")})
+	            @APIResponse(
+	            		responseCode = "400",
+	            		description = "ComponentDemands is not valid",
+	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+			 	 @APIResponse(
+					 	responseCode = "404",
+					    description = "The Inventory or Component does not exist for the delivered ComponentDemand.",
+					    content = @Content(mediaType = MediaType.TEXT_PLAIN)),
+		         @APIResponse(
+			            responseCode = "200",
+			            description = "The ComponentDemands are dilvered.")})
 		@RequestBody(
             name="componantDemands",
             content = @Content(
@@ -348,7 +361,7 @@ public abstract class BaseComponentResource {
     @Operation(
         summary = "Deliver ComponentDemands",
         description = "Deliver the ComponentDemands.")
-	public Response deliver(ComponentDemands componentDemands) {
+	public Response deliver(@Valid ComponentDemands componentDemands) {
 		try {
 			bean.deliver(DtoMapper.mapToComponentDemandEntity(componentDemands.getComponentDemands()));
 		} catch (InventoryNotFoundException e) {

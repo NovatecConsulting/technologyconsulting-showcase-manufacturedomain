@@ -27,6 +27,7 @@ import de.novatec.showcase.manufacture.ejb.entity.WorkOrder;
 import de.novatec.showcase.manufacture.ejb.entity.WorkOrderStatus;
 import de.novatec.showcase.manufacture.ejb.session.exception.AssemblyNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.InventoryHasNotEnoughPartsException;
+import de.novatec.showcase.manufacture.ejb.session.exception.InventoryNotFoundException;
 import de.novatec.showcase.manufacture.ejb.session.exception.WorkOrderNotFoundException;
 
 @Stateless
@@ -67,7 +68,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException, AssemblyNotFoundException {
+	public WorkOrder scheduleWorkOrder(WorkOrder workOrder) throws RestcallException, InventoryHasNotEnoughPartsException, AssemblyNotFoundException, InventoryNotFoundException {
 		workOrder.setStartDate(Calendar.getInstance());
 		em.persist(workOrder);
 		Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
@@ -76,7 +77,6 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		for (Bom bom : assembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
 			Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), workOrder.getLocation());
-			// TODO check if Inventory was found (NPE)!
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
 				componentDemands.add(new ComponentDemand(bom.getComponentId(), orderQuantity, inventory.getLocation()));
@@ -125,7 +125,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException, AssemblyNotFoundException {
+	public WorkOrder cancelWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException, AssemblyNotFoundException, InventoryNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCancelable(workOrder)) {
 			Assembly assembly = manufactureSession.findAssembly(workOrder.getAssemblyId());
@@ -140,7 +140,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public WorkOrder completeWorkOrder(Integer workOrderId, int manufacturedQuantity) throws WorkOrderNotFoundException {
+	public WorkOrder completeWorkOrder(Integer workOrderId, int manufacturedQuantity) throws WorkOrderNotFoundException, InventoryNotFoundException {
 		WorkOrder workOrder = this.findWorkOrder(workOrderId);
 		if (isCompletable(workOrder)) {
 			workOrder.setStatusCompleted();
@@ -181,8 +181,9 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	 * returns <code>quantity</code> items of the Component referenced in
 	 * <code>Bom</code> to the <code>Inventory</code> at <code>location</code> if
 	 * they weren't used yet
+	 * @throws InventoryNotFoundException
 	 */
-	private void returnInventory(Bom bom, int quantity, int location, WorkOrderStatus workOrderStatus) {
+	private void returnInventory(Bom bom, int quantity, int location, WorkOrderStatus workOrderStatus) throws InventoryNotFoundException {
 		Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), location);
 		if (isComponentUsed(bom, workOrderStatus)) {
 			inventory.addQuantityOnHand(quantity);

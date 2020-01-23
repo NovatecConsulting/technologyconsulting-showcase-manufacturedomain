@@ -47,7 +47,7 @@ public class ComponentResource extends BaseComponentResource {
 	                description = "Component not found",
 	                content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
-	            		responseCode = "500",
+	            		responseCode = "400",
 	            		description = "Component id is less than 1",
 	            		content = @Content(mediaType = MediaType.TEXT_PLAIN)),
 	            @APIResponse(
@@ -66,7 +66,7 @@ public class ComponentResource extends BaseComponentResource {
 		            schema = @Schema(type = SchemaType.STRING)) 
 			@PathParam("id") String componentId) {
 		if (Integer.valueOf(componentId).intValue() <= 0) {
-			return Response.serverError().entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity("Id cannot be less than 1!").type(MediaType.TEXT_PLAIN).build();
 		}
 		Component component;
 		try {
