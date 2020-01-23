@@ -8,8 +8,7 @@
 		traceSpecification="com.ibm.ws.microprofile.health.*=all" />
 
 <!-- 	<httpEndpoint host="localhost" httpPort="-1" -->
-	<httpEndpoint host="localhost" httpPort="${default.http.port}"
-		httpsPort="${default.https.port}" id="defaultHttpEndpoint" />
+	<httpEndpoint host="localhost" httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint" />
 
 	<keyStore id="defaultKeyStore"
 		type="PKCS12"
