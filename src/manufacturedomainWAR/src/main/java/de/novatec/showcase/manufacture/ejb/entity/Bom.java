@@ -42,10 +42,10 @@ public class Bom {
 	@Column(name="B_ENG_CHANGE", length = 10)
 	private String engChange;
 	
-	@Column(name="B_OPS", length = 100)
+	@Column(name="B_OPS")
 	private int opsNo;
 	
-	@Column(name="B_OPS_DESC")
+	@Column(name="B_OPS_DESC", length = 100)
 	private String opsDesc;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
