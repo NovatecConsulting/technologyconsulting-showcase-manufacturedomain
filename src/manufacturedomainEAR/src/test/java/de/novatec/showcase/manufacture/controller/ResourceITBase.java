@@ -2,6 +2,8 @@ package de.novatec.showcase.manufacture.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -27,7 +29,11 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.junit.MockServerRule;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import de.novatec.showcase.manufacture.dto.Assembly;
@@ -35,10 +41,13 @@ import de.novatec.showcase.manufacture.dto.Bom;
 import de.novatec.showcase.manufacture.dto.BomPK;
 import de.novatec.showcase.manufacture.dto.Component;
 import de.novatec.showcase.manufacture.dto.Inventory;
+import de.novatec.showcase.manufacture.dto.PurchaseOrder;
+import de.novatec.showcase.manufacture.dto.PurchaseOrderLine;
 import io.netty.handler.codec.http.HttpMethod;
 
 public abstract class ResourceITBase {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ResourceITBase.class);
 	protected static final String PORT = System.getProperty("http.port");
 	protected static final String BASE_URL = "http://localhost:" + PORT + "/manufacturedomain/";
 
@@ -56,26 +65,6 @@ public abstract class ResourceITBase {
 
 	protected MockServerClient mockServerClient;
 	
-	private static final String PURCHASEORDERS_JSON_RESPONSE = "[{"
-			+ "\"poNumber\":2,"
-			+ "\"sentDate\":null,"
-			+ "\"siteId\":26,"
-			+ "\"startDate\":\"2018-12-03\","
-			+ "\"supplierId\":2,"
-			+ "\"version\":0,"
-			+ "\"purchaseOrderlines\":[{"
-				+ "\"polNumber\":2,"
-				+ "\"poNumber\":2,"
-				+ "\"outstandingBalance\":3015.17,"
-				+ "\"requestedDeliveryDate\":\"2008-12-08\","
-				+ "\"leadtime\":55,"
-				+ "\"deliveryLocation\":1,"
-				+ "\"optionalComment\":\"COMMENT_ZCWUIOWHDWESWNWRTMKFHFZZBSYEZHCHBOREDIBUQUBYFMREDRKTNTSIIBLCCAMLUMMILPLCY\","
-				+ "\"partNumber\":\"1\","
-				+ "\"orderedQuantity\":20,"
-				+ "\"version\":95}]"
-			+ "}]";
-
 	// @formatter:off
 	private static List<Component> setupComponents = Arrays.asList(
 			new Component("Part1", "The 1st part", "1", Integer.valueOf(1), Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(1), Integer.valueOf(1)),
@@ -121,16 +110,40 @@ public abstract class ResourceITBase {
 	@Before
 	public void before()
 	{
-		mockServerClient.when(
-				new HttpRequest()
-	            .withMethod(HttpMethod.POST.toString())
-	            .withPath("/supplierdomain/supplier/purchase/")
-	    )
-	    .respond(
-	        new HttpResponse()
-	        	.withStatusCode(Response.Status.CREATED.getStatusCode())
-	            .withBody(PURCHASEORDERS_JSON_RESPONSE, org.mockserver.model.MediaType.APPLICATION_JSON)
-	    );
+		PurchaseOrder purchaseOrder = new PurchaseOrder();
+		purchaseOrder.setPoNumber(2);
+		purchaseOrder.setSentDate(constantDate().getTime());
+		purchaseOrder.setSiteId(26);
+		purchaseOrder.setStartDate(new Timestamp(constantDate().getTime().getTime()));
+		purchaseOrder.setSupplierId(2);
+		purchaseOrder.setVersion(0);
+		PurchaseOrderLine purchaseOrderLine = new PurchaseOrderLine();
+		purchaseOrderLine.setPoNumber(2);
+		purchaseOrderLine.setPolNumber(2);
+		purchaseOrderLine.setOutstandingBalance( BigDecimal.valueOf(3515,17));
+		purchaseOrderLine.setRequestedDeliveryDate(constantDate().getTime());
+		purchaseOrderLine.setLeadtime(55);
+		purchaseOrderLine.setDeliveryLocation(1);
+		purchaseOrderLine.setOptionalComment("COMMENT_ZCWUIOWHDWESWNWRTMKFHFZZBSYEZHCHBOREDIBUQUBYFMREDRKTNTSIIBLCCAMLUMMILPLCY");
+		purchaseOrderLine.setPartNumber("1");
+		purchaseOrderLine.setOrderedQuantity(20);
+		purchaseOrderLine.setVersion(95);
+		purchaseOrder.setPurchaseOrderlines(Arrays.asList(purchaseOrderLine));
+		
+		try {
+			mockServerClient.when(
+					new HttpRequest()
+			        .withMethod(HttpMethod.POST.toString())
+			        .withPath("/supplierdomain/supplier/purchase/")
+			)
+			.respond(
+			    new HttpResponse()
+			    	.withStatusCode(Response.Status.CREATED.getStatusCode())
+			        .withBody(new ObjectMapper().writeValueAsString(Entity.json(Arrays.asList(purchaseOrder)).getEntity()), org.mockserver.model.MediaType.APPLICATION_JSON)
+			);
+		} catch (JsonProcessingException e) {
+			LOG.error("Could not process Json from object " + purchaseOrder + "!", e);
+		}
 	}
 
 	private static void setup() {
