@@ -30,7 +30,7 @@
 
 	<jndiEntry jndiName="supplierdomain.purchase.url" value="${env.SUPPLIER_PURCHASE_URL}"/>
 	<jndiEntry jndiName="supplierdomain.username" value="${env.SUPPLIER_USER}"/>
-	<jndiEntry jndiName="supplierdomain.password" value="${env.SUPPLIER_PASSWORD"/>
+	<jndiEntry jndiName="supplierdomain.password" value="${env.SUPPLIER_PASSWORD}"/>
 
 	<basicRegistry id="basic" realm="defaultRealm">
 		<user name="admin" password="adminpwd" />
