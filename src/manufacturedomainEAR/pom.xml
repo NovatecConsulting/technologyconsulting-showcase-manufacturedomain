@@ -20,17 +20,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Liberty configuration -->
-		<liberty.var.default.http.port>9080</liberty.var.default.http.port>
-		<liberty.var.default.https.port>9443</liberty.var.default.https.port>
-		<liberty.env.HTTP_PORT>${liberty.var.default.http.port}</liberty.env.HTTP_PORT>
-		<liberty.env.HTTPS_PORT>${liberty.var.default.https.port}</liberty.env.HTTPS_PORT>
-		<liberty.env.SUPPLIER_PURCHASE_URL>http://localhost:9090/supplierdomain/supplier/purchase/</liberty.env.SUPPLIER_PURCHASE_URL>
+		<liberty.env.HTTP_PORT>9080</liberty.env.HTTP_PORT>
+		<liberty.env.HTTPS_PORT>9443</liberty.env.HTTPS_PORT>
+		<http.port.supplier>9090</http.port.supplier>
+		<liberty.env.SUPPLIER_PURCHASE_URL>http://localhost:${http.port.supplier}/supplierdomain/supplier/purchase/</liberty.env.SUPPLIER_PURCHASE_URL>
 		<liberty.env.SUPPLIER_USER>orderer</liberty.env.SUPPLIER_USER>
 		<liberty.env.SUPPLIER_PASSWORD>pwd</liberty.env.SUPPLIER_PASSWORD>
-		<http.port.supplier>9090</http.port.supplier>
-		<username.supplier>orderer</username.supplier>
-		<password.supplier>pwd</password.supplier>
-
 	</properties>
 
 	<dependencies>
@@ -135,13 +130,6 @@
 					<serverName>${project.artifactId}Server</serverName>
 					<stripVersion>true</stripVersion>
 					<configDirectory>../../resources/liberty/config</configDirectory>
-					<bootstrapProperties>
-						<default.http.port>${liberty.var.default.http.port}</default.http.port>
-						<default.https.port>${liberty.var.default.https.port}</default.https.port>
-						<http.port.supplier>${http.port.supplier}</http.port.supplier>
-						<username.supplier>${username.supplier}</username.supplier>
-						<password.supplier>${password.supplier}</password.supplier>
-					</bootstrapProperties>
 				</configuration>
 				<executions>
 					<execution>
@@ -224,11 +212,9 @@
 				<version>3.0.0-M4</version>
 				<configuration>
 					<systemPropertyVariables>
-						<https.port>${liberty.var.default.https.port}</https.port>
-						<http.port>${liberty.var.default.http.port}</http.port>
+						<https.port>${liberty.env.HTTPS_PORT}</https.port>
+						<http.port>${liberty.env.HTTP_PORT}</http.port>
 						<http.port.supplier>${http.port.supplier}</http.port.supplier>
-						<username.supplier>${username.supplier}</username.supplier>
-						<password.supplier>${password.supplier}</password.supplier>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>

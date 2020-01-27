@@ -101,6 +101,7 @@ public class ManufactureSession implements ManufactureSessionLocal {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void deliver(List<ComponentDemand> componentDemands) throws InventoryNotFoundException {
 		for (ComponentDemand componentDemand : componentDemands) {
+			//TODO load all inventories for all component demand and location
 			Inventory inventory = this.getInventory(componentDemand.getComponentId(), componentDemand.getLocation());
 				inventory.addQuantityOnHand(componentDemand.getQuantity());
 				// reduce quantity in order

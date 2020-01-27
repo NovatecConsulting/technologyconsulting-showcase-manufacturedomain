@@ -3,6 +3,7 @@ package de.novatec.showcase.manufacture.client.supplier;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.client.Client;
@@ -25,25 +26,19 @@ import de.novatec.showcase.manufacture.dto.PurchaseOrder;
 import de.novatec.showcase.manufacture.ejb.entity.ComponentDemand;
 import de.novatec.showcase.manufacture.mapper.DtoMapper;
 
+@ManagedBean
 public class ComponentDemandPurchaser {
 
 	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL = "supplierdomain.purchase.url";
 	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME = "supplierdomain.username";
 	private static final String JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD = "supplierdomain.password";
 	private static final Logger log = LoggerFactory.getLogger(ComponentDemandPurchaser.class);
-	private static final String USERNAME = System.getProperty("username.supplier");
-	private static final String PASSWORD = System.getProperty("password.supplier");
-	private static final String PORT = System.getProperty("http.port.supplier");
-	private static final String BASE_URL = "http://localhost:" + PORT + "/supplierdomain/";
-
-	private static final String SUPPLIER_URL = BASE_URL + "supplier/";
-	private static final String PURCHASE_URL = SUPPLIER_URL + "purchase/";
-	private String purchaseUrl = PURCHASE_URL;
-	private String username = USERNAME;
-	private String password = PASSWORD;
+	private String purchaseUrl;
+	private String username;
+	private String password;
 	private Client client;
 
-	public ComponentDemandPurchaser() {
+	public ComponentDemandPurchaser() throws ManufactureDomainNotConfiguredException {
 		client = ClientBuilder.newClient();
 		client.register(JacksonJsonProvider.class);
 		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basicBuilder().build();
@@ -54,9 +49,11 @@ public class ComponentDemandPurchaser {
 			username = (String) new InitialContext().lookup(JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME);
 			password = (String) new InitialContext().lookup(JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD);
 		} catch (NamingException e) {
-			log.warn("JNDI properties " + JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL + " or "
+			log.error("JNDI properties " + JNDI_PROPERTY_SUPPLIERDOMAIN_PURCHASE_URL + " or "
 					+ JNDI_PROPERTY_SUPPLIERDOMAIN_USERNAME + " or " + JNDI_PROPERTY_SUPPLIERDOMAIN_PASSWORD
 					+ " not found! Using system properties where possible!", e);
+			throw new ManufactureDomainNotConfiguredException("One or more JNDI properties for the manufacture domain is/are missing!");
+			//TODO add check if variables values start with ${env. so that there is no replacement in the server.xml done
 		}
 	}
 

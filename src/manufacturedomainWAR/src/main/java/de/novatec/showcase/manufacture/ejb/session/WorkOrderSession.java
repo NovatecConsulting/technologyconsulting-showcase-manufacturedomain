@@ -9,6 +9,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -42,7 +43,8 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 	@EJB
 	private ManufactureSessionLocal manufactureSession;
 
-	private ComponentDemandPurchaser componentDemandPurchaser = new ComponentDemandPurchaser();
+	@Inject
+	private ComponentDemandPurchaser componentDemandPurchaser;
 
 	@Override
 	public WorkOrder findWorkOrder(Integer workOrderId) throws WorkOrderNotFoundException {
@@ -76,6 +78,7 @@ public class WorkOrderSession implements WorkOrderSessionLocal {
 		List<ComponentDemand> componentDemands = new ArrayList<ComponentDemand>();
 		for (Bom bom : assembly.getAssemblyBoms()) {
 			int requiredQuantity = bom.getQuantity() * workOrder.getOriginalQuantity();
+			//TODO load inventories once for all Component ids
 			Inventory inventory = manufactureSession.getInventory(bom.getComponentId(), workOrder.getLocation());
 			int orderQuantity = this.getQuantityToBeOrdered(inventory, requiredQuantity);
 			if (isBelowWaterMark(orderQuantity)) {
