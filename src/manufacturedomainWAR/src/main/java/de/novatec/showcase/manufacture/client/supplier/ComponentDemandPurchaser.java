@@ -83,7 +83,6 @@ public class ComponentDemandPurchaser {
 	}
 	
 	private boolean validateJNDIProperty(String value) {
-		LOG.info(value);
 		return value.startsWith("${env.");
 	}
 }
