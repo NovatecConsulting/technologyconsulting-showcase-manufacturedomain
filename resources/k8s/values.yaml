@@ -6,7 +6,7 @@ app:
   appconfig:
     httpport: 9080
     httpsport: 9443
-    SUPPLIER_PURCHASE_URL: http://supplierdomain/supplierdomain/supplier/purchase/
+    SUPPLIER_PURCHASE_URL: http://supplierdomain-service/supplierdomain/supplier/purchase/
     SUPPLIER_USER: 
     SUPPLIER_PASSWORD: 
   dbconfig:
