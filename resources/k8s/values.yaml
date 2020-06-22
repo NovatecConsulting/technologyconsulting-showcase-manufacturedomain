@@ -1,0 +1,22 @@
+app: 
+  image:
+    repository: 
+    tag: 
+    pullsecret: 
+  appconfig:
+    httpport: 9080
+    httpsport: 9443
+    SUPPLIER_PURCHASE_URL: http://supplierdomain/supplierdomain/supplier/purchase/
+    SUPPLIER_USER: 
+    SUPPLIER_PASSWORD: 
+  dbconfig:
+    host: 
+    user: 
+    password: 
+    schema: 
+  scale:
+    minReplica: 1
+    maxReplicas: 3
+  azureconfig:
+    resourcegroup: 
+    loadbalancerip: 
