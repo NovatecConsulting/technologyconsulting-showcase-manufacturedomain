@@ -12,7 +12,7 @@ declare PORT=9080
 
 function main
 {
-        script_options
+        script_options $@
         # setup the database
         setup
 
