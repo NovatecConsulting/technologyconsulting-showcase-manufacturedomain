@@ -69,6 +69,6 @@ stages:
               chartPath: './resources/k8s/'
               releaseName: 'manufacturedomain'
               valueFile: './resources/k8s/values.yaml'
-              overrideValues: 'app.image.pullsecret=$(containerregistry-pullsecret),app.image.tag=$(containerimagetag),app.image.repository=$(containerregistry)/$(containerimagerepository),app.azureconfig.resourcegroup="tc-showcase-prod",app.azureconfig.loadbalancerip=$(manufacturedomain-publicip),app.appconfig.SUPPLIER_USER=$(manufacturedomain-auth-supplier-user),app.appconfig.SUPPLIER_PASSWORD=$(manufacturedomain-auth-supplier-password),app.dbconfig.host=changeme,app.dbconfig.user=changeme,app.dbconfig.password=changeme,app.dbconfig.schema=changeme'
+              overrideValues: 'app.image.pullsecret=$(containerregistry-pullsecret),app.image.tag=$(containerimagetag),app.image.repository=$(containerregistry)/$(containerimagerepository),app.azureconfig.resourcegroup="tc-showcase-prod",app.azureconfig.loadbalancerip=$(manufacturedomain-publicip),app.appconfig.SUPPLIER_USER=$(manufacturedomain-auth-supplier-user),app.appconfig.SUPPLIER_PASSWORD=$(manufacturedomain-auth-supplier-password),app.appconfig.SUPPLIER_PURCHASE_URL=$(manufacturedomain-auth-purchaseurl),app.dbconfig.host=changeme,app.dbconfig.user=changeme,app.dbconfig.password=changeme,app.dbconfig.schema=changeme'
               resetValues: true
               force: false
