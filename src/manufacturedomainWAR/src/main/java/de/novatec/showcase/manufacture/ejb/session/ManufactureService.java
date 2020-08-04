@@ -33,7 +33,9 @@ public interface ManufactureService {
 
 	void deliver(List<ComponentDemand> delivery) throws InventoryNotFoundException;
 
-	Component createComponent(Component component);
+	Component createComponent(Component component) throws ComponentNotFoundException;
+
+	Component deleteComponent(Integer componentId) throws ComponentNotFoundException;
 
 	Assembly createAssembly(Assembly assembly);
 

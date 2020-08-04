@@ -123,6 +123,14 @@ public class ManufactureSession implements ManufactureSessionLocal {
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Component deleteComponent(Integer componentId) throws ComponentNotFoundException {
+		Component component = this.findComponent(Integer.toString(componentId));
+		em.remove(component);
+		return component;
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public Assembly createAssembly(Assembly assembly) {
 		em.persist(assembly);
 		return assembly;
