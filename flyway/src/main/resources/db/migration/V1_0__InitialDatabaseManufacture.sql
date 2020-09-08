@@ -110,6 +110,61 @@ ALTER TABLE public.u_sequences OWNER TO manufacture_user;
 
 
 --
+-- Name: m_bom m_bom_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_bom
+    ADD CONSTRAINT m_bom_pkey PRIMARY KEY (b_comp_id, b_line_no, b_assembly_id);
+
+
+--
+-- Name: m_inventory m_inventory_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_inventory
+    ADD CONSTRAINT m_inventory_pkey PRIMARY KEY (in_p_id, in_location);
+
+
+--
+-- Name: m_parts m_parts_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_parts
+    ADD CONSTRAINT m_parts_pkey PRIMARY KEY (p_id);
+
+
+--
+-- Name: m_workorder m_workorder_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_workorder
+    ADD CONSTRAINT m_workorder_pkey PRIMARY KEY (wo_number);
+
+
+--
+-- Name: u_sequences u_sequences_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.u_sequences
+    ADD CONSTRAINT u_sequences_pkey PRIMARY KEY (s_id);
+
+
+--
+-- Name: m_bom fk_m_bom_b_assembly_id; Type: FK CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_bom
+    ADD CONSTRAINT fk_m_bom_b_assembly_id FOREIGN KEY (b_assembly_id) REFERENCES public.m_parts(p_id);
+
+
+--
+-- Name: m_inventory fk_m_inventory_in_p_id; Type: FK CONSTRAINT; Schema: public; Owner: manufacture_user
+--
+
+ALTER TABLE ONLY public.m_inventory
+    ADD CONSTRAINT fk_m_inventory_in_p_id FOREIGN KEY (in_p_id) REFERENCES public.m_parts(p_id);
+
+--
 -- PostgreSQL database dump complete
 --
 
