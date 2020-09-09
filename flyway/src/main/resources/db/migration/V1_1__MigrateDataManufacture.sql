@@ -4,6 +4,7 @@
 
 -- Dumped from database version 11.9 (Debian 11.9-1.pgdg90+1)
 -- Dumped by pg_dump version 11.9 (Debian 11.9-1.pgdg90+1)
+
 --
 -- Data for Name: m_parts; Type: TABLE DATA; Schema: public; Owner: manufacture_user
 --
@@ -33,6 +34,24 @@ COPY public.m_parts (p_id, p_type, p_desc, p_himark, p_lomark, p_name, p_planner
 22	1	Assembly 19 which is build from 2 parts	3	3	Assembly 19	2	3	1	1
 23	1	Assembly 20 which is build from 2 parts	3	3	Assembly 20	2	3	1	1
 24	1	Assembly 21 which is build from 2 parts	3	3	Assembly 21	2	3	1	1
+\.
+
+
+--
+-- Data for Name: m_workorder; Type: TABLE DATA; Schema: public; Owner: manufacture_user
+--
+
+COPY public.m_workorder (wo_number, wo_assembly_id, wo_comp_qty, wo_due_date, wo_location, wo_ol_id, wo_orig_qty, wo_o_id, wo_start_date, wo_status, wo_version) FROM stdin;
+\.
+
+
+--
+-- Data for Name: u_sequences; Type: TABLE DATA; Schema: public; Owner: manufacture_user
+--
+
+COPY public.u_sequences (s_id, s_nextnum) FROM stdin;
+WO_SEQ	0
+C_SEQ	24
 \.
 
 
@@ -102,23 +121,6 @@ COPY public.m_inventory (in_p_id, in_location, in_acc_code, in_act_date, in_orde
 
 
 
-
---
--- Data for Name: m_workorder; Type: TABLE DATA; Schema: public; Owner: manufacture_user
---
-
-COPY public.m_workorder (wo_number, wo_assembly_id, wo_comp_qty, wo_due_date, wo_location, wo_ol_id, wo_orig_qty, wo_o_id, wo_start_date, wo_status, wo_version) FROM stdin;
-\.
-
-
---
--- Data for Name: u_sequences; Type: TABLE DATA; Schema: public; Owner: manufacture_user
---
-
-COPY public.u_sequences (s_id, s_nextnum) FROM stdin;
-WO_SEQ	0
-C_SEQ	24
-\.
 
 
 --

@@ -108,7 +108,6 @@ CREATE TABLE public.u_sequences (
 
 ALTER TABLE public.u_sequences OWNER TO manufacture_user;
 
-
 --
 -- Name: m_bom m_bom_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user
 --
@@ -164,7 +163,8 @@ ALTER TABLE ONLY public.m_bom
 ALTER TABLE ONLY public.m_inventory
     ADD CONSTRAINT fk_m_inventory_in_p_id FOREIGN KEY (in_p_id) REFERENCES public.m_parts(p_id);
 
+
+
 --
 -- PostgreSQL database dump complete
 --
-
