@@ -21,3 +21,4 @@ jobs:
         repository: novatec/technologyconsulting-showcase-manufacturedomain
         tags: latest
         tag_with_sha: true
+        key:  
