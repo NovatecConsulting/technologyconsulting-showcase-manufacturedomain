@@ -1,6 +1,6 @@
 app: 
   image:
-    repository: 
+    repository: novatec/technologyconsulting-showcase-manufacturedomain
     tag: 
   appconfig:
     httpport: 9080
