@@ -36,7 +36,7 @@ CREATE TABLE public.m_bom (
 );
 
 
-ALTER TABLE public.m_bom OWNER TO manufacture_user;
+--ALTER TABLE public.m_bom OWNER TO manufacture_user;
 
 --
 -- Name: m_inventory; Type: TABLE; Schema: public; Owner: manufacture_user
@@ -53,7 +53,7 @@ CREATE TABLE public.m_inventory (
 );
 
 
-ALTER TABLE public.m_inventory OWNER TO manufacture_user;
+--ALTER TABLE public.m_inventory OWNER TO manufacture_user;
 
 --
 -- Name: m_parts; Type: TABLE; Schema: public; Owner: manufacture_user
@@ -73,7 +73,7 @@ CREATE TABLE public.m_parts (
 );
 
 
-ALTER TABLE public.m_parts OWNER TO manufacture_user;
+--ALTER TABLE public.m_parts OWNER TO manufacture_user;
 
 --
 -- Name: m_workorder; Type: TABLE; Schema: public; Owner: manufacture_user
@@ -94,7 +94,7 @@ CREATE TABLE public.m_workorder (
 );
 
 
-ALTER TABLE public.m_workorder OWNER TO manufacture_user;
+--ALTER TABLE public.m_workorder OWNER TO manufacture_user;
 
 --
 -- Name: u_sequences; Type: TABLE; Schema: public; Owner: manufacture_user
@@ -106,7 +106,7 @@ CREATE TABLE public.u_sequences (
 );
 
 
-ALTER TABLE public.u_sequences OWNER TO manufacture_user;
+--ALTER TABLE public.u_sequences OWNER TO manufacture_user;
 
 --
 -- Name: m_bom m_bom_pkey; Type: CONSTRAINT; Schema: public; Owner: manufacture_user

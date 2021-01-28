@@ -2,7 +2,7 @@ name: Build and push to Dockerhub
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, migrateToPsql ]
 
 jobs:
   build:
@@ -12,13 +12,15 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    
+
+    - name: Add SHORT_SHA env property with commit short sha
+      run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      
     - name: Build and push Docker images
       uses: docker/build-push-action@v1
       with:
-        username: ${{ secrets.DOCKERHUB_PATCSHOWCASE_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PATCSHOWCASE_PASSWORD }}
+        username: ${{ secrets.TC_SHOWCASE_DOCKERHUB_USER }}
+        password: ${{ secrets.TC_SHOWCASE_DOCKERHUB_PASSWORD }}
         repository: novatec/technologyconsulting-showcase-manufacturedomain
-        tags: latest
+        tags: latest, ${{ env.SHORT_SHA }} 
         tag_with_sha: true
-        key:  

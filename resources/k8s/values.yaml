@@ -6,11 +6,11 @@ app:
     httpport: 9080
     httpsport: 9443
     SUPPLIER_PURCHASE_URL: http://supplierdomain-service/supplierdomain/supplier/purchase/
-    SUPPLIER_USER: 
-    SUPPLIER_PASSWORD: 
+    SUPPLIER_USER: admin
+    SUPPLIER_PASSWORD: adminpwd
   dbconfig:
     host: 
-    port: 5432
+    port: "5432"
     user: 
     password: 
     schema: 

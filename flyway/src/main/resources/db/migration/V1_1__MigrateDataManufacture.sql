@@ -49,10 +49,10 @@ COPY public.m_workorder (wo_number, wo_assembly_id, wo_comp_qty, wo_due_date, wo
 -- Data for Name: u_sequences; Type: TABLE DATA; Schema: public; Owner: manufacture_user
 --
 
-COPY public.u_sequences (s_id, s_nextnum) FROM stdin;
-WO_SEQ	0
-C_SEQ	24
-\.
+--COPY public.u_sequences (s_id, s_nextnum) FROM stdin;
+--WO_SEQ	0
+--C_SEQ	24
+--\.
 
 
 --
