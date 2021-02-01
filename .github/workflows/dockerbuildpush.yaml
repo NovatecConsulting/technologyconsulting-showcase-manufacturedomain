@@ -25,7 +25,7 @@ jobs:
         tags: latest, ${{ env.SHORT_SHA }} 
         tag_with_sha: true
 
-- name: Run Trivy vulnerability scanner CRITICAL
+    - name: Run Trivy vulnerability scanner CRITICAL
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'novatec/technologyconsulting-showcase-manufacturedomain:${{ env.SHORT_SHA }}'
