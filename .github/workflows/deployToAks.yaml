@@ -58,7 +58,7 @@ jobs:
                 -v "$(pwd)/resources/pipelines/helperscripts/kubeconfig":/root/.kube \
                 alpine/helm \
                     upgrade manufacturedomain ./ \
-                        --namespace manufacturedomain \
+                        --namespace ${STAGE} \
                         --install \
                         --values values.yaml \
                         --set app.dbconfig.host="${DBFQDN}" \
