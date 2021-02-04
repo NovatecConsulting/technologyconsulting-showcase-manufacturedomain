@@ -16,7 +16,7 @@ DBFQDN=$(az keyvault secret show --vault-name "vault-tc-showcase-test" --name "d
 
 INGRESSFQDN=$(az keyvault secret show --vault-name "vault-tc-showcase-test" --name "ingress-fqdn" --query value -o tsv)
 
-MANUFACTUREDOMAINIP=$(az keyvault secret show --vault-name "vault-tc-showcase-test" --name "manufacturedomain-publicip" --query value -o tsv)
+MANUFACTUREDOMAINIP=$(az keyvault secret show --vault-name "vault-tc-showcase-test" --name "${STAGE}-manufacturedomain-publicip" --query value -o tsv)
 
 # put values to Github's env stage
 # this not a safe solution
