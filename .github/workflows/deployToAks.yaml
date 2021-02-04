@@ -51,6 +51,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.TC_SHOWCASE_ARM_TENANT_ID }}
           AKSRESOURCEGROUP: 'tc-showcase-test'
           AKSNAME: 'k8s-tc-showcase-test'
+          STAGE: 'stag'
           IMAGETAG: ${{ env.SHORT_SHA }}
         run: |
               docker run \
