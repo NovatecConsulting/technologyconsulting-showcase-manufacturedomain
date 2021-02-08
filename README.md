@@ -5,7 +5,6 @@ manufacturedomain is a part of a showcase implementation which is running on a o
     - **manufacturedomainDTO** - contains all classes used in the rest controllers
     - **manufacturedomainWAR** - contains the rest controllers and all EJB classes and entities
     - **manufacturedomainEAR** - contains the war module
-
 and could be found under the src folder
 
 ## The project consists of the following packages
@@ -52,3 +51,4 @@ The smoketest.sh script consist of two sub scripts - the setup-db.sh and busines
 
 ## openAPI
 check [openAPI](http://localhost:9080/api/explorer/) if the server is running for the API documentation of the manufacture domain
+
